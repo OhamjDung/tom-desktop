@@ -6,20 +6,20 @@ Built from the Figma storyboard and the supplied Astra brief. The original Figma
 
 - `lib/portfolio.ts`: Tom's name, UTD email, draft about copy, social URLs, asset paths, and local project collection.
 - `public/assets/`: exact Figma-exported wallpaper, computer photo, and portrait. These are local files, not expiring Figma links.
-- `assets.introLong` and `assets.introShort` point to the supplied MP4s. The long video starts on each page load. Scroll, swipe, keyboard skip, or Skip intro switches to the short video. Only the active video's `ended` event opens the desktop; repeated skips never bypass the short clip. A failed short video opens the desktop as an error fallback. Autoplay rejection displays Play intro.
+- `assets.introLong` and `assets.introShort` point to the supplied MP4s, played with audio enabled. The long video starts on each page load. Scroll, swipe, keyboard skip, or Skip intro switches to the short video. A second skip reveals the desktop immediately while the short video's audio continues to its end. The hidden video stays mounted only until playback completes. Normal playback opens the desktop at the active video's end. A failed short video opens the desktop as an error fallback. Browsers that block audible autoplay display Play intro; the site never silently mutes the videos.
 - `assets.monitorFrame`: set to the final transparent screen-border PNG after delivery. No monitor frame has been fabricated in CSS. Final border alignment must be checked with the actual asset.
 - Social URLs are intentionally empty. The contact window says Coming soon; it does not navigate to fake profiles.
 - Personal Desktop is the sole local project. Add actual projects to the fallback collection or connect Supabase.
 
 ## Interaction model
 
-The initial desktop opens all window groups with About Me in front. Scroll down through About Me, Projects, and Contact Me; windows minimize toward the corresponding taskbar button. Inside a long window, scrolling moves the content until its edge, then advances the story. Page Up/Down and background swipe gestures provide equivalent navigation.
+The initial desktop opens all window groups with About Me in front. Scroll over the desktop background through About Me, Projects, and Contact Me; windows minimize toward the corresponding taskbar button. Scrolling inside a window only scrolls its content, and never advances the story at either edge. Window chrome, taskbar controls, and menus also do not advance the story. Page Up/Down outside windows and background swipe gestures provide equivalent navigation.
 
 Before reaching Contact Me by scrolling, taskbar buttons directly select a group. Once scrolling reaches Contact Me, the taskbar opens/minimizes groups independently. Mobile keeps at most one main group visible. Title bars drag, double-click maximizes, and the standard controls minimize/restore/close. Closing is reversible through taskbar/desktop shortcuts.
 
-Hold a corner to rotate the window. Horizontal movement changes yaw, with the opposite edge acting as the page hinge; vertical movement changes pitch. There is no Z-axis roll, so a sideways page turn cannot turn the window upside down. Motion's spring animation returns it on scroll, click outside, or ten seconds of inactivity. Corners also accept arrow keys; Escape resets. Mobile disables corner spinning and dragging. Reduced motion disables ambient graphics and removes spring transitions; both user-supplied intro videos still follow the requested playback sequence and offer a pause control.
+Hold a corner to rotate the window. Horizontal movement changes yaw, with the opposite edge acting as the page hinge; vertical movement changes pitch. There is no Z-axis roll, so a sideways page turn cannot turn the window upside down. Releasing a title-bar drag or corner grab immediately starts the spring return to its normal position and orientation. Scroll, click outside, or ten seconds of inactivity also reset it. Corners accept arrow keys; Escape resets. Mobile disables corner spinning and dragging. Reduced motion disables ambient graphics and removes spring transitions; both supplied intro videos follow the requested playback sequence and offer a pause control.
 
-Start offers navigation, an ambient toggle, desktop reset, and intro replay. No audio plays. Copy email uses the clipboard, with a selectable mailto address if permission is denied.
+Start offers navigation, an ambient toggle, desktop reset, and intro replay. Replaying remounts the intro and stops any previous video's audio. Copy email uses the clipboard, with a selectable mailto address if permission is denied.
 
 ## Projects and images
 

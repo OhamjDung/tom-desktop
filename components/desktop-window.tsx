@@ -70,7 +70,7 @@ export function DesktopWindow({id,title,className='',children,visible,focused,z,
     }
     scheduleReset();
   }
-  function end(){gesture.current=null;setHeld(false);scheduleReset();}
+  function end(){if(!gesture.current)return;if(timer.current)clearTimeout(timer.current);restoreInteraction();}
   return <motion.section ref={ref} id={`window-${id}`} data-window={id} data-visible={visible} aria-label={title} inert={!visible}
     className={`xp-window ${className} ${focused?'focused':'unfocused'} ${maximized?'maximized':''}`}
     style={{zIndex:z,transformOrigin:pivot,pointerEvents:visible?'auto':'none'}}

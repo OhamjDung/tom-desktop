@@ -1,7 +1,7 @@
 "use client";
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { AnimatePresence } from 'motion/react';
-import { ArrowLeft, ArrowRight, Check, Copy, ExternalLink, FileText, FolderOpen, Code2 as Github, ImageIcon, BriefcaseBusiness as Linkedin, Mail, Monitor, RotateCcw, Sparkles, VolumeX } from 'lucide-react';
+import { ArrowLeft, ArrowRight, Check, Copy, ExternalLink, FileText, FolderOpen, Code2 as Github, ImageIcon, BriefcaseBusiness as Linkedin, Mail, Monitor, RotateCcw, Sparkles, Volume2 } from 'lucide-react';
 import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuCheckboxItem } from '@/components/ui/dropdown-menu';
 import { DesktopWindow } from '@/components/desktop-window';
 import { Boot } from '@/components/boot';
@@ -21,6 +21,8 @@ function ProjectImage({src,alt}:{src:string;alt:string}) {
 
 export default function Home() {
   const [booting,setBooting]=useState(true);
+  const [introMounted,setIntroMounted]=useState(true);
+  const [introSession,setIntroSession]=useState(0);
   const [active,setActive]=useState<Section>('about');
   const [open,setOpen]=useState<string[]>(['contact','projects','photo','about']);
   const [focused,setFocused]=useState('about');
@@ -41,6 +43,8 @@ export default function Home() {
   const touch=useRef<{x:number;y:number;target:EventTarget|null}|null>(null);
   const copyTimer=useRef<ReturnType<typeof setTimeout>|null>(null);
   const finishBoot=useCallback(()=>{setBooting(false);scrollLock.current=Date.now()+500;},[]);
+  const completeIntro=useCallback(()=>{setBooting(false);setIntroMounted(false);},[]);
+  const replayIntro=()=>{setIntroSession(n=>n+1);setIntroMounted(true);setBooting(true);};
 
   const focus=(id:string)=>{setFocused(id);setOrder(old=>[...old.filter(x=>x!==id),id]);};
   const resetWindows=()=>{setReset(v=>v+1);setOrder(['contact','projects','about','photo']);};
@@ -73,12 +77,9 @@ export default function Home() {
   useEffect(()=>{const scroller=document.querySelector('.project-content');if(scroller)scroller.scrollTop=0;},[selected]);
   useEffect(()=>{
     if(booting)return;
-    function canScroll(target:EventTarget|null,delta:number) {
-      const node=target instanceof Element?target.closest<HTMLElement>('[data-scrollable]'):null;
-      return node&&node.scrollHeight>node.clientHeight+1&&((delta>0&&node.scrollTop+node.clientHeight<node.scrollHeight-2)||(delta<0&&node.scrollTop>1));
-    }
+    const isBackground=(target:EventTarget|null)=>target instanceof Element&&!target.closest('.xp-window,.taskbar,.desktop-icons,[role="menu"],[data-slot="dropdown-menu-content"]');
     const onWheel=(e:WheelEvent)=>{
-      if(e.ctrlKey||canScroll(e.target,e.deltaY))return;
+      if(e.ctrlKey||!isBackground(e.target)){wheel.current.total=0;return;}
       e.preventDefault();setReset(v=>v+1);
       const now=Date.now(),delta=e.deltaY*(e.deltaMode===1?16:e.deltaMode===2?window.innerHeight:1);
       if(now-wheel.current.last>180||Math.sign(delta)!==Math.sign(wheel.current.total))wheel.current.total=0;
@@ -86,11 +87,11 @@ export default function Home() {
       if(Math.abs(wheel.current.total)>75){advance(Math.sign(wheel.current.total));wheel.current.total=0;}
     };
     const key=(e:KeyboardEvent)=>{
-      if((e.target as HTMLElement).closest('button,a,input,textarea,[role="menu"]') || canScroll(e.target,e.key==='PageUp'?-1:1))return;
+      if((e.target as HTMLElement).closest('button,a,input,textarea,[role="menu"]') || !isBackground(e.target))return;
       if(['PageDown','ArrowDown','PageUp','ArrowUp',' '].includes(e.key)){e.preventDefault();advance(['PageUp','ArrowUp'].includes(e.key)?-1:1);}
     };
     const onTouchStart=(e:TouchEvent)=>{touch.current={x:e.touches[0].clientX,y:e.touches[0].clientY,target:e.target};};
-    const onTouchEnd=(e:TouchEvent)=>{if(!touch.current)return;const dy=touch.current.y-e.changedTouches[0].clientY,dx=touch.current.x-e.changedTouches[0].clientX;if(Math.abs(dy)>65&&Math.abs(dy)>Math.abs(dx)&&!canScroll(touch.current.target,dy))advance(Math.sign(dy));touch.current=null;};
+    const onTouchEnd=(e:TouchEvent)=>{if(!touch.current)return;const dy=touch.current.y-e.changedTouches[0].clientY,dx=touch.current.x-e.changedTouches[0].clientX;if(Math.abs(dy)>65&&Math.abs(dy)>Math.abs(dx)&&isBackground(touch.current.target))advance(Math.sign(dy));touch.current=null;};
     window.addEventListener('wheel',onWheel,{passive:false});window.addEventListener('keydown',key);window.addEventListener('touchstart',onTouchStart,{passive:true});window.addEventListener('touchend',onTouchEnd,{passive:true});
     return()=>{window.removeEventListener('wheel',onWheel);window.removeEventListener('keydown',key);window.removeEventListener('touchstart',onTouchStart);window.removeEventListener('touchend',onTouchEnd);};
   },[active,completed,booting]);
@@ -126,13 +127,13 @@ export default function Home() {
       {assets.monitorFrame&&<img className="monitor-frame" src={assets.monitorFrame} alt=""/>}
       <div className="crt-overlay"/>
       <nav className="taskbar" aria-label="Portfolio navigation">
-        <DropdownMenu><DropdownMenuTrigger asChild><button className="start-button" aria-label="Start menu"><Monitor/>start</button></DropdownMenuTrigger><DropdownMenuContent side="top" align="start" className="start-menu"><div className="start-profile"><img src={assets.portrait} alt=""/><strong>Tom Pham</strong></div>{sections.map(({id,label,Icon})=><DropdownMenuItem key={id} onSelect={()=>go(id,'shortcut')}><Icon/>{label}</DropdownMenuItem>)}<DropdownMenuSeparator/><DropdownMenuCheckboxItem checked={ambient} onCheckedChange={setAmbient}><Sparkles size={16}/>Ambient effects</DropdownMenuCheckboxItem><DropdownMenuItem onSelect={()=>{resetWindows();setCompleted(false);setActive('about');setOpen(['contact','projects','about','photo']);}}><RotateCcw/>Reset desktop</DropdownMenuItem><DropdownMenuItem onSelect={()=>setBooting(true)}><Monitor/>Replay intro</DropdownMenuItem></DropdownMenuContent></DropdownMenu>
+        <DropdownMenu><DropdownMenuTrigger asChild><button className="start-button" aria-label="Start menu"><Monitor/>start</button></DropdownMenuTrigger><DropdownMenuContent side="top" align="start" className="start-menu"><div className="start-profile"><img src={assets.portrait} alt=""/><strong>Tom Pham</strong></div>{sections.map(({id,label,Icon})=><DropdownMenuItem key={id} onSelect={()=>go(id,'shortcut')}><Icon/>{label}</DropdownMenuItem>)}<DropdownMenuSeparator/><DropdownMenuCheckboxItem checked={ambient} onCheckedChange={setAmbient}><Sparkles size={16}/>Ambient effects</DropdownMenuCheckboxItem><DropdownMenuItem onSelect={()=>{resetWindows();setCompleted(false);setActive('about');setOpen(['contact','projects','about','photo']);}}><RotateCcw/>Reset desktop</DropdownMenuItem><DropdownMenuItem onSelect={replayIntro}><Monitor/>Replay intro</DropdownMenuItem></DropdownMenuContent></DropdownMenu>
         {sections.map(({id,label,Icon})=><button key={id} data-task={id} aria-controls={`window-${id}`} aria-pressed={open.includes(id)} className={`task-button ${active===id&&open.includes(id)?'active':''} ${open.includes(id)?'is-open':''}`} onClick={()=>go(id)}><Icon size={19}/><span>{label}</span></button>)}
-        <div className="tray"><VolumeX size={17} aria-label="Sound off"/><time suppressHydrationWarning>{clock}</time></div>
+        <div className="tray"><Volume2 size={17} aria-label="Sound enabled"/><time suppressHydrationWarning>{clock}</time></div>
       </nav>
       <div className="sr-only" aria-live="polite">{sections.find(s=>s.id===active)?.label}{completed?'. Story complete. Taskbar buttons now toggle windows.':''}</div>
     </div>
-    <AnimatePresence>{booting&&<Boot onComplete={finishBoot}/>}</AnimatePresence>
+    <AnimatePresence>{introMounted&&<Boot key={introSession} onReveal={finishBoot} onComplete={completeIntro}/>}</AnimatePresence>
   </main>;
 }
 
