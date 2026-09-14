@@ -26,7 +26,15 @@ export function Boot({onComplete,onReveal}:{onComplete:()=>void;onReveal:()=>voi
     if(!video||video.paused){void play();return;}
     revealedRef.current=true;setRevealed(true);onReveal();
   },[onReveal,play]);
-  useEffect(()=>{void play();return()=>shortVideo.current?.pause();},[play]);
+  useEffect(()=>{
+    const video=shortVideo.current;
+    // Inside the 3D room, the parent posts start-intro when the camera reaches the monitor.
+    if(window.parent===window){void play();return()=>video?.pause();}
+    const onMessage=(e:MessageEvent)=>{if(e.data?.type==='start-intro'&&video?.paused&&!revealedRef.current)void play();};
+    window.addEventListener('message',onMessage);
+    window.parent.postMessage({type:'request-intro'},'*');
+    return()=>{window.removeEventListener('message',onMessage);video?.pause();};
+  },[play]);
   useEffect(()=>{
     if(revealed)return;
     const wheel=(e:WheelEvent)=>{if(e.ctrlKey||!e.deltaY)return;e.preventDefault();skip();};
