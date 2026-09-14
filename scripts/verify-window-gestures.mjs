@@ -11,7 +11,7 @@ const read=locator=>locator.evaluate(el=>{
 });
 try {
   await page.goto('http://localhost:5173');
-  await page.getByRole('button',{name:'Skip intro',exact:true}).click();
+  await page.getByRole('button',{name:'Open desktop',exact:true}).click();
   await page.waitForSelector('.boot',{state:'detached'});
   await page.waitForTimeout(800);
   const win=page.locator('[data-window="about"]');

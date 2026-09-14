@@ -13,7 +13,7 @@ const visible=id=>page.locator(`[data-window="${id}"][data-visible="true"]`);
 async function settle(){await page.waitForTimeout(800);}
 try {
   await page.goto('http://localhost:5173');
-  await page.getByRole('button',{name:'Skip intro'}).click();
+  await page.getByRole('button',{name:'Open desktop'}).click();
   await page.waitForSelector('.boot',{state:'detached'});
   await settle();
   assert.equal(await visible('about').count(),1);
@@ -66,5 +66,5 @@ try {
   }
   assert.equal(await phone.locator('.ambient canvas').count(),0);
   assert.deepEqual(errors,[]);
-  console.log(JSON.stringify({passed:true,checks:['boot skip','taskbar navigation','project detail/back','scroll advances','end-of-story toggles','copy email','corner spin/click-off reset','maximize/restore','start reset','mobile layout','reduced-motion fallback'],screenshots:'qa/'}));
+  console.log(JSON.stringify({passed:true,checks:['short intro reveal','taskbar navigation','project detail/back','scroll advances','end-of-story toggles','copy email','corner spin/click-off reset','maximize/restore','start reset','mobile layout','reduced-motion fallback'],screenshots:'qa/'}));
 } finally {await browser.close();}

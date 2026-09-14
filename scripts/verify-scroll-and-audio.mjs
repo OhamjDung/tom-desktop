@@ -6,7 +6,7 @@ const browser=await chromium.launch({headless:true,args:['--autoplay-policy=no-u
 const page=await browser.newPage({viewport:{width:1440,height:900}});
 try {
   await page.goto('http://localhost:5173');
-  await page.getByRole('button',{name:'Skip intro',exact:true}).click();
+  await page.getByRole('button',{name:'Open desktop',exact:true}).click();
   await page.waitForSelector('.boot',{state:'detached'});
   await page.locator('[data-task="projects"]').click();await page.waitForTimeout(800);
   await page.getByRole('button',{name:/Personal Desktop/}).click();
@@ -28,13 +28,12 @@ try {
   await page.mouse.move(1300,800);await page.mouse.wheel(0,150);await page.waitForTimeout(800);
   assert.equal(await page.locator('main').getAttribute('data-section'),'contact','Background still advances');
   await page.getByRole('button',{name:'Start menu'}).click();await page.getByRole('menuitem',{name:'Replay intro'}).click();
-  await page.waitForSelector('.boot[data-intro="long"]');
-  await page.getByRole('button',{name:'Skip intro',exact:true}).click();
-  await page.waitForFunction(()=>document.querySelector('.short-intro').currentTime>0);
+  await page.waitForSelector('.boot[data-intro="short"]');
+  await page.waitForFunction(()=>document.querySelector('.intro-video').currentTime>0);
   await page.getByRole('button',{name:'Open desktop',exact:true}).click();
   await page.waitForSelector('.boot[data-revealed="true"]',{state:'attached'});
-  assert.equal(await page.locator('.short-intro').evaluate(v=>v.paused||v.muted),false);
-  console.log('PASS: content/boundary/chrome scrolling, background navigation, persistent title drag, replay and button second-skip audio.');
+  assert.equal(await page.locator('.intro-video').evaluate(v=>v.paused||v.muted),false);
+  console.log('PASS: content/boundary/chrome scrolling, background navigation, persistent title drag, replay and button reveal audio.');
 }finally{await browser.close();}
 
 // Simulate an autoplay rejection, then use real playback after a trusted click.

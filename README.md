@@ -2,7 +2,7 @@
 
 A Figma-based Windows XP portfolio with a photographic CRT intro, draggable and spinnable windows, scroll-driven storytelling, taskbar navigation, project explorer, and email contact.
 
-The active desktop has no visual filters or CRT overlay. The green-shard effect and its preset are preserved in `archived-assets/green-shards/`, disconnected from the running application.
+The active desktop has no visual filters or CRT overlay. The green-shard effect and its preset are preserved in `archived-assets/green-shards/`, disconnected from the running application. The intro uses only `IntroShort.mp4`.
 
 ```sh
 npm install

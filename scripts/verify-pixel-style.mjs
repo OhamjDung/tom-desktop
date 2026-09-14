@@ -7,7 +7,7 @@ const page=await browser.newPage({viewport:{width:1440,height:900}});
 const errors=[];page.on('pageerror',error=>errors.push(error.message));
 try {
   await page.goto('http://localhost:5173');
-  await page.getByRole('button',{name:'Skip intro',exact:true}).click();
+  await page.getByRole('button',{name:'Open desktop',exact:true}).click();
   await page.waitForSelector('.boot',{state:'detached'});
   await page.evaluate(()=>document.fonts.ready);
   for(const weight of [400,700])assert.ok(await page.evaluate(w=>document.fonts.check(`${w} 11px "Desktop Pixel"`),weight));

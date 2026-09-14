@@ -6,7 +6,7 @@ export const profile = {
 };
 // The final transparent monitor frame can be connected when supplied.
 export const assets = {
-  introLong: '/assets/IntroLong.mp4', introShort: '/assets/IntroShort.mp4',
+  introShort: '/assets/IntroShort.mp4',
   monitorFrame: null as string | null,
   computer: '/assets/computer.png', wallpaper: '/assets/wallpaper-bliss.webp', portrait: '/assets/portrait.png',
 };

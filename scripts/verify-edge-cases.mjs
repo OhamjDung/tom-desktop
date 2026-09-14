@@ -5,7 +5,7 @@ const {chromium}=require(process.env.PLAYWRIGHT_MODULE||'C:/Users/Hi/.cache/code
 const browser=await chromium.launch({headless:true,args:['--autoplay-policy=no-user-gesture-required']});
 const page=await browser.newPage({viewport:{width:1440,height:900}});
 try {
-  await page.goto('http://localhost:5173');await page.getByRole('button',{name:'Skip intro'}).click();await page.waitForSelector('.boot',{state:'detached'});await page.waitForTimeout(900);
+  await page.goto('http://localhost:5173');await page.getByRole('button',{name:'Open desktop'}).click();await page.waitForSelector('.boot',{state:'detached'});await page.waitForTimeout(900);
   const win=page.locator('[data-window="about"]');
   const title=await win.locator('.titlebar').boundingBox();
   await page.mouse.move(title.x+70,title.y+15);await page.mouse.down();await page.mouse.move(title.x+150,title.y+55,{steps:8});await page.waitForTimeout(400);
