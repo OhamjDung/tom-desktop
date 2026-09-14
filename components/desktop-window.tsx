@@ -14,7 +14,7 @@ export function DesktopWindow({id,title,className='',children,visible,focused,z,
   const ref = useRef<HTMLElement>(null);
   const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const dirty=useRef(false);
-  const gesture = useRef<{x:number;y:number;mode:string;start:typeof origin;rect:DOMRect}|null>(null);
+  const gesture = useRef<{x:number;y:number;mode:string;start:typeof origin;rect:DOMRect;corner:string;axis?:'pitch'|'yaw'}|null>(null);
   const reduced = useReducedMotion();
   const [pose,setPose] = useState(origin);
   const [pivot,setPivot] = useState('50% 50%');
@@ -49,7 +49,7 @@ export function DesktopWindow({id,title,className='',children,visible,focused,z,
     if(mode==='drag' && (e.target as HTMLElement).closest('button'))return;
     e.preventDefault();e.stopPropagation();onFocus();
     const rect=ref.current!.getBoundingClientRect();
-    gesture.current={x:e.clientX,y:e.clientY,mode,start:pose,rect};
+    gesture.current={x:e.clientX,y:e.clientY,mode,start:pose,rect,corner};
     dirty.current=true;
     setPivot(corner);setHeld(true);scheduleReset();e.currentTarget.setPointerCapture(e.pointerId);
   }
@@ -57,8 +57,14 @@ export function DesktopWindow({id,title,className='',children,visible,focused,z,
     const g=gesture.current;if(!g)return;
     const dx=e.clientX-g.x,dy=e.clientY-g.y;
     if(g.mode==='spin') {
+      if(!g.axis&&Math.hypot(dx,dy)>4){
+        g.axis=Math.abs(dx)>Math.abs(dy)?'yaw':'pitch';
+        if(g.axis==='yaw')setPivot(`${dx<0?0:100}% ${g.corner.split(' ')[1]}`);
+      }
       const limit=reduced?4:75;
-      setPose({...g.start,rx:Math.max(-limit,Math.min(limit,-dy*.25)),ry:Math.max(-limit,Math.min(limit,dx*.25)),rz:reduced?0:dx*.32});
+      const yawLimit=reduced?4:180;
+      // Pitch follows vertical movement; yaw turns the page without screen-plane roll.
+      setPose({...g.start,rx:Math.max(-limit,Math.min(limit,g.start.rx-dy*.25)),ry:Math.max(-yawLimit,Math.min(yawLimit,g.start.ry+dx*.35)),rz:0});
     } else {
       setPose({...g.start,x:g.start.x+Math.max(12-g.rect.left,Math.min(window.innerWidth-g.rect.right-12,dx)),y:g.start.y+Math.max(6-g.rect.top,Math.min(window.innerHeight-90-g.rect.top,dy))});
     }
@@ -81,6 +87,6 @@ export function DesktopWindow({id,title,className='',children,visible,focused,z,
     </header>
     {children}
     <footer className="statusbar">{footer || <><span>{title.split(' - ')[0]}</span><span>UTF-8</span></>}</footer>
-    {['top-left','top-right','bottom-left','bottom-right'].map((corner,i)=><button key={corner} className={`spin-corner ${corner}`} aria-label={`Spin ${title} from ${corner} corner`} title="Hold to spin" onPointerDown={e=>start(e,'spin',`${i%2?100:0}% ${i>1?100:0}%`)} onPointerMove={move} onPointerUp={end} onPointerCancel={end} onKeyDown={e=>{if(['ArrowLeft','ArrowRight'].includes(e.key)){e.preventDefault();setPose(p=>({...p,rz:p.rz+(e.key==='ArrowRight'?10:-10)}));scheduleReset();}}} />)}
+    {['top-left','top-right','bottom-left','bottom-right'].map((corner,i)=><button key={corner} className={`spin-corner ${corner}`} aria-label={`Spin ${title} from ${corner} corner`} title="Hold to spin" onPointerDown={e=>start(e,'spin',`${i%2?100:0}% ${i>1?100:0}%`)} onPointerMove={move} onPointerUp={end} onPointerCancel={end} onKeyDown={e=>{if(['ArrowLeft','ArrowRight','ArrowUp','ArrowDown'].includes(e.key)){e.preventDefault();dirty.current=true;const limit=reduced?4:75;setPose(p=>({...p,ry:Math.max(-limit,Math.min(limit,p.ry+(e.key==='ArrowRight'?10:e.key==='ArrowLeft'?-10:0))),rx:Math.max(-limit,Math.min(limit,p.rx+(e.key==='ArrowUp'?10:e.key==='ArrowDown'?-10:0))),rz:0}));scheduleReset();}}} />)}
   </motion.section>;
 }

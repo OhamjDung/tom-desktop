@@ -4,9 +4,10 @@ export const profile = {
   about: 'I like work that feels personal, precise, and a little unexpected.',
   currently: 'Exploring product storytelling and the space between design and engineering.',
 };
-// Replace null with an asset path when the final files are supplied.
+// The final transparent monitor frame can be connected when supplied.
 export const assets = {
-  bootVideo: null as string | null, monitorFrame: null as string | null,
+  introLong: '/assets/IntroLong.mp4', introShort: '/assets/IntroShort.mp4',
+  monitorFrame: null as string | null,
   computer: '/assets/computer.png', wallpaper: '/assets/wallpaper.png', portrait: '/assets/portrait.png',
 };
 export type Project = {

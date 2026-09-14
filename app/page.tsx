@@ -55,7 +55,7 @@ export default function Home() {
     requestAnimationFrame(()=>document.querySelector<HTMLButtonElement>(`[data-task="${section}"]`)?.focus());
   }
   function advance(direction:number) {
-    if(booting){finishBoot();return;}
+    if(booting)return;
     if(Date.now()<scrollLock.current)return;
     scrollLock.current=Date.now()+650;resetWindows();
     const current=sections.findIndex(s=>s.id===active);
@@ -72,6 +72,7 @@ export default function Home() {
   useEffect(()=>()=>{if(copyTimer.current)clearTimeout(copyTimer.current);},[]);
   useEffect(()=>{const scroller=document.querySelector('.project-content');if(scroller)scroller.scrollTop=0;},[selected]);
   useEffect(()=>{
+    if(booting)return;
     function canScroll(target:EventTarget|null,delta:number) {
       const node=target instanceof Element?target.closest<HTMLElement>('[data-scrollable]'):null;
       return node&&node.scrollHeight>node.clientHeight+1&&((delta>0&&node.scrollTop+node.clientHeight<node.scrollHeight-2)||(delta<0&&node.scrollTop>1));

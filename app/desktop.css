@@ -119,3 +119,11 @@ button:focus-visible,a:focus-visible { outline:3px solid #efb529; outline-offset
 }
 @media(prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important;scroll-behavior:auto!important;}.ambient{display:none;}}
 @media(max-width:760px){.project-grid{grid-template-columns:1fr;}}
+.video-boot {background:#080909;}
+.intro-video {position:absolute;inset:0;width:100%;height:100%;object-fit:cover;pointer-events:none;}
+.short-intro {opacity:0;}.short-intro.is-playing{opacity:1;}
+.intro-controls {position:absolute;bottom:max(25px,env(safe-area-inset-bottom));right:25px;display:flex;gap:8px;align-items:center;}
+.intro-controls .skip-boot {position:static;min-width:104px;min-height:37px;}.skip-boot:disabled{cursor:default;color:#ddd;}
+.intro-pause {display:grid;place-items:center;width:37px;height:37px;color:#fff;background:#111a;border:1px solid #fff5;border-radius:2px;}
+.play-intro {position:absolute;display:flex;align-items:center;gap:8px;background:#111c;color:#fff;border:1px solid #fff8;padding:12px 18px;border-radius:3px;font-size:14px;}
+@media(max-width:640px){.intro-video{object-fit:contain;}.intro-controls{right:16px;bottom:24px;}}
