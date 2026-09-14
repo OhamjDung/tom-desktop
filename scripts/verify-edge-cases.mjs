@@ -2,7 +2,6 @@ import {createRequire} from 'node:module';
 import assert from 'node:assert/strict';
 const require=createRequire(import.meta.url);
 const {chromium}=require(process.env.PLAYWRIGHT_MODULE||'C:/Users/Hi/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/node_modules/playwright');
-const sharp=require('C:/Users/Hi/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/node_modules/sharp');
 const browser=await chromium.launch({headless:true,args:['--autoplay-policy=no-user-gesture-required']});
 const page=await browser.newPage({viewport:{width:1440,height:900}});
 try {
@@ -19,17 +18,7 @@ try {
   assert.equal(transform,parked,'Ten-second rotation reset preserves dragged placement');
   const assets=await page.locator('img').evaluateAll(imgs=>imgs.map(img=>({src:img.getAttribute('src'),ok:img.complete&&img.naturalWidth>0})));
   assert.ok(assets.every(img=>img.ok),JSON.stringify(assets));
-  const canvas=page.locator('.aero-shards[data-ready="true"] canvas');
-  let graphics='WebGPU unavailable; fallback active';
-  if(await canvas.count()) {
-    await page.addStyleTag({content:'.ambient{opacity:1!important;mix-blend-mode:normal!important;mask-image:none!important;z-index:1200!important}'});
-    const a=await canvas.screenshot();await page.waitForTimeout(1500);const b=await canvas.screenshot();
-    const stats=await sharp(a).stats();
-    assert.ok(stats.channels.some(c=>c.stdev>2),'Canvas should contain rendered detail');
-    assert.notDeepEqual(a,b,'Canvas should animate');
-    await canvas.screenshot({path:'qa/aeroshards.png'});
-    graphics='WebGPU canvas rendered nonblank and animated';
-  }
+  assert.equal(await page.locator('.ambient,.aero-shards,.crt-overlay').count(),0,'Archived effects and CRT overlay are not mounted');
   await page.setViewportSize({width:320,height:568});
   await page.emulateMedia({reducedMotion:'reduce'});
   for(const section of ['projects','contact','about']) {
@@ -37,5 +26,5 @@ try {
     await page.waitForTimeout(200);
     assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth>window.innerWidth),false);
   }
-  console.log(JSON.stringify({passed:true,checks:['persistent title drag','ten-second rotation reset','local assets loaded','320px narrow viewport'],graphics}));
+  console.log(JSON.stringify({passed:true,checks:['persistent title drag','ten-second rotation reset','local assets loaded','320px narrow viewport','effects archived']}));
 } finally {await browser.close();}

@@ -12,7 +12,6 @@ button:focus-visible,a:focus-visible { outline:3px solid #efb529; outline-offset
 .desktop-icons button { display:flex; flex-direction:column; align-items:center; gap:7px; background:none; border:1px solid transparent; color:white; padding:6px 2px; text-shadow:1px 2px 2px #123451; font-size:13px; }
 .desktop-icons button:hover,.desktop-icons button:focus-visible { background:#366bba66; border-color:#c8d9fb99; }
 .pixel-icon {display:inline-block;flex:none;object-fit:contain;image-rendering:pixelated;vertical-align:middle;user-select:none;}
-.desktop-icons .pixel-icon {filter:drop-shadow(1px 1px #102e4270);}
 .window-stage { position:absolute; inset:0 0 42px; perspective:1600px; }
 .xp-window { position:absolute; background:#ece9d8; border:3px solid #0862ed; border-top:0; border-radius:7px 7px 2px 2px; box-shadow:3px 8px 22px #10213550; display:flex; flex-direction:column; overflow:hidden; }
 .titlebar { height:31px; min-height:31px; display:flex; align-items:center; gap:7px; padding:3px 3px 3px 6px; background:linear-gradient(#2588ff 0%,#0864ee 12%,#0051dc 75%,#086aef 95%); color:white; text-shadow:1px 1px #173c87; font-weight:bold; font-size:13px; user-select:none; }
@@ -33,7 +32,7 @@ button:focus-visible,a:focus-visible { outline:3px solid #efb529; outline-offset
 .taskbar { position:absolute; bottom:0; height:42px; width:100%; display:flex; gap:4px; align-items:center; background:linear-gradient(#3091fd,#1664e5 18%,#2260d3 80%,#1846ab); border-top:1px solid #94c4fc; z-index:1000; color:white; }
 .start-button { height:41px; border:0; border-right:2px solid #144c1f; border-radius:0 13px 13px 0; background:linear-gradient(#70ba5c,#32852b 30%,#389530 80%,#22601e); color:white; padding:0 23px 0 13px; display:flex; align-items:center; gap:8px; font-size:23px; font-style:italic; font-weight:bold; text-shadow:1px 2px #22551c; margin-right:9px; }
 .task-button { height:32px; width:175px; min-width:0; display:flex; align-items:center; gap:8px; border:1px solid #80b2fb; border-right-color:#1d4aac; border-bottom-color:#123d9f; border-radius:3px; padding:0 10px; background:#347fed; color:white; text-align:left; font-size:13px; box-shadow:inset 0 1px #ffffff25; }
-.task-button.active { background:#174aa9; border-color:#123986; box-shadow:inset 1px 2px 4px #123575; }.task-button:hover { filter:brightness(1.12); }
+.task-button.active { background:#174aa9; border-color:#123986; box-shadow:inset 1px 2px 4px #123575; }.task-button:hover { border-color:#c4dcff; }
 .tray { margin-left:auto; display:flex; height:41px; align-items:center; gap:13px; padding:0 16px; background:linear-gradient(#27b9f5,#0795e0); border-left:1px solid #155bba; font-size:12px; white-space:nowrap; }
 @media(max-width:1000px) { .main-window { left:35%; width:58%; }.photo-window { left:12%; width:29%; height:340px; } }
 @media(max-width:640px) { .desktop-icons { top:18px; left:14px; display:flex; width:auto; gap:15px; }.desktop-icons button { width:73px; }.main-window { left:12px; top:125px; width:calc(100% - 24px); height:calc(100% - 145px); }.photo-window { display:none; }.paper { padding:24px 20px; }.paper h1 {font-size:28px;}.paper dl {grid-template-columns:74px 1fr;}.start-button {padding:0 10px; margin:0; font-size:0; border-radius:0 8px 8px 0;}.start-button svg{width:22px;}.task-button {flex:1; padding:0 6px; justify-content:center; font-size:12px; gap:5px; height:38px;}.taskbar {height:48px;}.tray {display:none;}.window-stage {bottom:48px;} }
@@ -48,7 +47,7 @@ button:focus-visible,a:focus-visible { outline:3px solid #efb529; outline-offset
 .window-controls {display:flex;gap:2px;}
 .window-controls button {width:22px;height:22px;border:1px solid #f2f6ff;border-radius:3px;background:linear-gradient(135deg,#8eb7f3,#317be8 48%,#1862d4);box-shadow:inset 1px 1px #b5d1f9;display:grid;place-items:center;padding:0;color:white;}
 .window-controls .close-control {background:linear-gradient(135deg,#f3aa8d,#e75429 50%,#c82e0b);box-shadow:inset 1px 1px #fbd0b9;}
-.window-controls button:hover {filter:brightness(1.2);}
+.window-controls button:hover {outline:1px solid white;outline-offset:-3px;}
 .spin-corner {position:absolute;width:12px;height:12px;z-index:3;border:0;background:transparent;touch-action:none;cursor:grab;padding:0;}
 .spin-corner::after {content:'';position:absolute;width:5px;height:5px;border:1px solid #fff9;opacity:.55;}
 .top-left {top:0;left:0;}.top-right {top:0;right:0;}.bottom-left {bottom:0;left:0;}.bottom-right {bottom:0;right:0;}
@@ -102,9 +101,6 @@ button:focus-visible,a:focus-visible { outline:3px solid #efb529; outline-offset
 .start-menu [role='menuitem'],.start-menu [role='menuitemcheckbox'] {min-height:36px;margin:3px 5px;font-size:13px;border-radius:0;}
 .start-profile {display:flex;align-items:center;gap:12px;background:linear-gradient(#2e8be9,#1465d3);color:#fff;padding:12px;margin-bottom:6px;}
 .start-profile img{width:43px;height:43px;object-fit:cover;border:2px solid white;border-radius:3px;}.start-profile strong{font-size:16px;}
-.ambient {position:absolute;inset:0;pointer-events:none;mix-blend-mode:multiply;opacity:.32;mask-image:linear-gradient(90deg,transparent 35%,#000 75%);}
-.ambient .aero-shards {background:transparent!important;}
-.crt-overlay {position:absolute;inset:0 0 42px;pointer-events:none;z-index:100;opacity:.045;background:repeating-linear-gradient(transparent 0px,transparent 3px,#213548 4px);box-shadow:inset 0 0 60px #07122430;}
 .monitor-frame {position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:102;}
 .boot {position:absolute;inset:0;z-index:2000;background:#080909;overflow:hidden;display:grid;place-items:center;}
 .boot-scene {width:min(100%,1450px);aspect-ratio:1497/1130;position:relative;transform-origin:59% 50%;}.boot-scene>img,.boot-scene>video {width:100%;height:100%;object-fit:contain;}
@@ -118,9 +114,9 @@ button:focus-visible,a:focus-visible { outline:3px solid #efb529; outline-offset
   .desktop[data-section] .xp-window:not(.photo-window){left:12px;top:125px;width:calc(100% - 24px);height:calc(100% - 141px);max-height:none;}
   .desktop[data-section='about'] .projects-window,.desktop[data-section='about'] .contact-window{visibility:hidden;}
   .desktop[data-section] .xp-window[data-visible='false']{visibility:hidden;}
-  .spin-corner{display:none;}.desktop-caption{display:none;}.explorer-sidebar{display:none;}.project-content{padding:21px 18px;}.project-intro h1{font-size:24px;}.contact-paper{padding:22px 20px;}.contact-paper h1{font-size:30px;}.contact-stamp{margin-bottom:14px;width:34px;height:34px;}.contact-paper .file-label{margin-bottom:20px!important;}.email-address{font-size:15px;}.social-links{gap:16px;}.crt-overlay{bottom:48px;opacity:.07;}.ambient{opacity:.18;}.boot-scene{width:170%;max-width:none;}.boot-screen{font-size:10px;gap:8px;}.boot-screen small{font-size:7px;}.mobile-portrait{display:block;width:100%;max-height:250px;object-fit:cover;margin-top:24px;}.titlebar{cursor:default;}.window-controls button{height:23px;width:23px;}.xp-window.maximized{inset:6px!important;width:calc(100% - 12px)!important;height:calc(100% - 12px)!important;}.photo-window.maximized{display:none;}
+  .spin-corner{display:none;}.desktop-caption{display:none;}.explorer-sidebar{display:none;}.project-content{padding:21px 18px;}.project-intro h1{font-size:24px;}.contact-paper{padding:22px 20px;}.contact-paper h1{font-size:30px;}.contact-stamp{margin-bottom:14px;width:34px;height:34px;}.contact-paper .file-label{margin-bottom:20px!important;}.email-address{font-size:15px;}.social-links{gap:16px;}.boot-scene{width:170%;max-width:none;}.boot-screen{font-size:10px;gap:8px;}.boot-screen small{font-size:7px;}.mobile-portrait{display:block;width:100%;max-height:250px;object-fit:cover;margin-top:24px;}.titlebar{cursor:default;}.window-controls button{height:23px;width:23px;}.xp-window.maximized{inset:6px!important;width:calc(100% - 12px)!important;height:calc(100% - 12px)!important;}.photo-window.maximized{display:none;}
 }
-@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important;scroll-behavior:auto!important;}.ambient{display:none;}}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important;scroll-behavior:auto!important;}}
 @media(max-width:760px){.project-grid{grid-template-columns:1fr;}}
 .video-boot {background:#080909;}
 .video-boot.audio-only {visibility:hidden;pointer-events:none;}

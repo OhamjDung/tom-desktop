@@ -1,12 +1,11 @@
 "use client";
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { AnimatePresence } from 'motion/react';
-import { ArrowLeft, ArrowRight, Check, Copy, ExternalLink, Code2 as Github, BriefcaseBusiness as Linkedin, RotateCcw, Sparkles, Volume2 } from 'lucide-react';
+import { ArrowLeft, ArrowRight, Check, Copy, ExternalLink, Code2 as Github, BriefcaseBusiness as Linkedin, RotateCcw, Volume2 } from 'lucide-react';
 import { FileText, FolderOpen, ImageIcon, Mail, Monitor } from '@/components/desktop-icons';
-import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuCheckboxItem } from '@/components/ui/dropdown-menu';
+import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator } from '@/components/ui/dropdown-menu';
 import { DesktopWindow } from '@/components/desktop-window';
 import { Boot } from '@/components/boot';
-import { Ambient } from '@/components/ambient';
 import { assets, profile, fallbackProjects, type Project } from '@/lib/portfolio';
 import './desktop.css';
 
@@ -30,7 +29,6 @@ export default function Home() {
   const [order,setOrder]=useState(['contact','projects','about','photo']);
   const [completed,setCompleted]=useState(false);
   const [reset,setReset]=useState(0);
-  const [ambient,setAmbient]=useState(true);
   const [clock,setClock]=useState('');
   const [copied,setCopied]=useState(false);
   const [copyError,setCopyError]=useState(false);
@@ -103,7 +101,6 @@ export default function Home() {
 
   return <main className="desktop" data-section={active} data-story-complete={completed}>
     <div className="wallpaper" style={{backgroundImage:`url('${assets.wallpaper}')`}}/>
-    {!booting&&<Ambient enabled={ambient}/>}
     <div className="desktop-content" inert={booting}>
       <div className="desktop-icons" aria-label="Desktop shortcuts">{sections.map(({id,label,Icon})=><button key={id} onClick={()=>go(id,'shortcut')}><Icon size={32}/><span>{label}</span></button>)}</div>
       <div className="desktop-caption" aria-hidden="true"><span>Tom's personal desktop</span><span>{String(sections.findIndex(s=>s.id===active)+1).padStart(2,'0')} / 03</span></div>
@@ -126,9 +123,8 @@ export default function Home() {
         </DesktopWindow>
       </div>
       {assets.monitorFrame&&<img className="monitor-frame" src={assets.monitorFrame} alt=""/>}
-      <div className="crt-overlay"/>
       <nav className="taskbar" aria-label="Portfolio navigation">
-        <DropdownMenu><DropdownMenuTrigger asChild><button className="start-button" aria-label="Start menu"><Monitor/>start</button></DropdownMenuTrigger><DropdownMenuContent side="top" align="start" className="start-menu"><div className="start-profile"><img src={assets.portrait} alt=""/><strong>Tom Pham</strong></div>{sections.map(({id,label,Icon})=><DropdownMenuItem key={id} onSelect={()=>go(id,'shortcut')}><Icon/>{label}</DropdownMenuItem>)}<DropdownMenuSeparator/><DropdownMenuCheckboxItem checked={ambient} onCheckedChange={setAmbient}><Sparkles size={16}/>Ambient effects</DropdownMenuCheckboxItem><DropdownMenuItem onSelect={()=>{resetWindows();setCompleted(false);setActive('about');setOpen(['contact','projects','about','photo']);}}><RotateCcw/>Reset desktop</DropdownMenuItem><DropdownMenuItem onSelect={replayIntro}><Monitor/>Replay intro</DropdownMenuItem></DropdownMenuContent></DropdownMenu>
+        <DropdownMenu><DropdownMenuTrigger asChild><button className="start-button" aria-label="Start menu"><Monitor/>start</button></DropdownMenuTrigger><DropdownMenuContent side="top" align="start" className="start-menu"><div className="start-profile"><img src={assets.portrait} alt=""/><strong>Tom Pham</strong></div>{sections.map(({id,label,Icon})=><DropdownMenuItem key={id} onSelect={()=>go(id,'shortcut')}><Icon/>{label}</DropdownMenuItem>)}<DropdownMenuSeparator/><DropdownMenuItem onSelect={()=>{resetWindows();setCompleted(false);setActive('about');setOpen(['contact','projects','about','photo']);}}><RotateCcw/>Reset desktop</DropdownMenuItem><DropdownMenuItem onSelect={replayIntro}><Monitor/>Replay intro</DropdownMenuItem></DropdownMenuContent></DropdownMenu>
         {sections.map(({id,label,Icon})=><button key={id} data-task={id} aria-controls={`window-${id}`} aria-pressed={open.includes(id)} className={`task-button ${active===id&&open.includes(id)?'active':''} ${open.includes(id)?'is-open':''}`} onClick={()=>go(id)}><Icon size={16}/><span>{label}</span></button>)}
         <div className="tray"><Volume2 size={17} aria-label="Sound enabled"/><time suppressHydrationWarning>{clock}</time></div>
       </nav>

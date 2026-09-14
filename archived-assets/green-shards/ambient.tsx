@@ -1,4 +1,5 @@
 "use client";
+import './desktop-integration.css';
 import { lazy, Suspense, useEffect, useState } from 'react';
 import { useReducedMotion } from 'motion/react';
 const AeroShards=lazy(()=>import('./effects/AeroShards'));

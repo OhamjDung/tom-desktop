@@ -20,7 +20,7 @@ Before reaching Contact Me by scrolling, taskbar buttons directly select a group
 
 Title-bar dragging leaves the window where it is released. Hold a corner to rotate the window. Horizontal movement changes yaw, with the opposite edge acting as the page hinge; vertical movement changes pitch. There is no Z-axis roll, so a sideways page turn cannot turn the window upside down. Releasing a corner springs from its actual released pose back to a flat orientation at its dragged position, preserving the hinge until the return completes. Scroll, click outside, or ten seconds of corner inactivity also reset the rotation without losing the dragged position. Section navigation, Reset desktop, and Escape restore the default layout. Corners accept arrow keys. Mobile disables corner spinning and dragging. Reduced motion disables ambient graphics and removes spring transitions; both supplied intro videos follow the requested playback sequence and offer a pause control.
 
-Start offers navigation, an ambient toggle, desktop reset, and intro replay. Replaying remounts the intro and stops any previous video's audio. Copy email uses the clipboard, with a selectable mailto address if permission is denied.
+Start offers navigation, desktop reset, and intro replay. Replaying remounts the intro and stops any previous video's audio. Copy email uses the clipboard, with a selectable mailto address if permission is denied.
 
 ## Projects and images
 
@@ -35,9 +35,9 @@ Start offers navigation, an ambient toggle, desktop reset, and intro replay. Rep
 
 The read policy only exposes published projects. The portfolio provides no visitor write policy or upload interface. Reference: [Supabase API keys](https://supabase.com/docs/guides/getting-started/api-keys) and [serving Storage assets](https://supabase.com/docs/guides/storage/serving/downloads).
 
-## Ambient graphics
+## Archived graphics
 
-`components/effects/AeroShards.jsx` and its CSS were extracted verbatim from the first full source block in the supplied attachment. `components/ambient.tsx` applies the requested parameters, lazily loads the effect, and blends it behind the desktop. It is omitted when WebGPU is unsupported, initialization fails, or reduced motion is enabled. Window rotation is a DOM interaction, so text stays selectable and controls remain real HTML elements.
+The green AeroShards source, original preset, and integration styles are preserved in `archived-assets/green-shards/`. Nothing in the active site imports them, and the Start menu no longer exposes an ambient toggle. CRT scanlines, vignette, and CSS brightness/drop-shadow filters have been removed. Window rotation remains a DOM interaction, so text stays selectable and controls remain real HTML elements.
 
 ## Run and verify
 

@@ -19,12 +19,16 @@ try {
       const invalid=await page.locator('.pixel-icon').evaluateAll(images=>images.filter(img=>!img.complete||!img.naturalWidth||getComputedStyle(img).imageRendering!=='pixelated').map(img=>img.src));
       assert.deepEqual(invalid,[],'All pixel icons load and use nearest-neighbor rendering');
       assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),'No page overflow');
+      assert.equal(await page.locator('.ambient,.aero-shards,.crt-overlay').count(),0,'No decorative effects mounted');
+      const filtered=await page.locator('.desktop,.desktop *').evaluateAll(elements=>elements.filter(el=>getComputedStyle(el).filter!=='none'||getComputedStyle(el).backdropFilter!=='none').map(el=>el.className));
+      assert.deepEqual(filtered,[],'No CSS filters on the desktop');
       const clipped=await page.locator('.task-button span,.desktop-icons span').evaluateAll(labels=>labels.filter(el=>el.scrollWidth>el.clientWidth).map(el=>el.textContent));
       assert.deepEqual(clipped,[],'Navigation labels fit');
       await page.screenshot({path:`qa/pixel-${section}-${viewport.width}.png`});
     }
   }
   await page.getByRole('button',{name:'Start menu'}).click();
+  assert.equal(await page.getByRole('menuitemcheckbox',{name:'Ambient effects'}).count(),0,'Archived effect cannot be re-enabled in the menu');
   assert.ok(await page.locator('.start-menu').evaluate(el=>getComputedStyle(el).fontFamily.includes('Desktop Pixel')));
   await page.screenshot({path:'qa/pixel-start-menu.png'});
   assert.deepEqual(errors,[]);

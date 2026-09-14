@@ -2018,4 +2018,3 @@ export default function AeroShards({
     </div>
   );
 }
-
