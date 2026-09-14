@@ -1,6 +1,6 @@
 @font-face {font-family:'Desktop Pixel';src:url('/assets/fonts/ms_sans_serif.woff2') format('woff2');font-style:normal;font-weight:400;font-display:swap;}
 @font-face {font-family:'Desktop Pixel';src:url('/assets/fonts/ms_sans_serif_bold.woff2') format('woff2');font-style:normal;font-weight:700;font-display:swap;}
-:root { --background:#ece9d8; --foreground:#17212a; --primary:#0758e8; --primary-foreground:white; --accent:#d7e7ff; --accent-foreground:#122439; --border:#aaa998; --radius:3px; --font-desktop:Tahoma,'Segoe UI',Verdana,sans-serif; --font-start:'Trebuchet MS','Franklin Gothic Medium',Tahoma,sans-serif; }
+:root { --background:#ece9d8; --foreground:#17212a; --primary:#0758e8; --primary-foreground:white; --accent:#d7e7ff; --accent-foreground:#122439; --border:#aaa998; --radius:3px; --font-desktop:'Desktop Pixel',Tahoma,sans-serif; --font-start:'Desktop Pixel',Tahoma,sans-serif; }
 * { box-sizing:border-box; letter-spacing:0; }
 html,body { margin:0; min-height:100%; font-family:var(--font-desktop); }
 button,a { -webkit-tap-highlight-color:transparent; }
@@ -129,7 +129,7 @@ button:focus-visible,a:focus-visible { outline:3px solid #efb529; outline-offset
 @media(max-width:640px){.intro-video{object-fit:contain;}.intro-controls{right:16px;bottom:24px;}}
 
 /* Bitmap UI type uses its native 11px grid, with double-size display text. */
-.desktop,[data-slot='dropdown-menu-content'] {font-family:var(--font-desktop);font-synthesis:none;-webkit-font-smoothing:antialiased;}
+.desktop,[data-slot='dropdown-menu-content'] {font-family:var(--font-desktop);font-synthesis:none;-webkit-font-smoothing:none;}
 .titlebar,.desktop-icons button,.task-button,.tray,.menubar,.statusbar,.menu-button,.plain-button,.address,.xp-button,.desktop-caption {font-size:16px;line-height:24px;}
 .titlebar {font-weight:700;}
 .desktop-icons button {text-shadow:1px 1px #16365b;}
