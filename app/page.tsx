@@ -102,7 +102,7 @@ export default function Home() {
   return <main className="desktop" data-section={active} data-story-complete={completed}>
     <div className="wallpaper" style={{backgroundImage:`url('${assets.wallpaper}')`}}/>
     <div className="desktop-content" inert={booting}>
-      <div className="desktop-icons" aria-label="Desktop shortcuts">{sections.map(({id,label,Icon})=><button key={id} onClick={()=>go(id,'shortcut')}><Icon size={32}/><span>{label}</span></button>)}</div>
+      <div className="desktop-icons" aria-label="Desktop shortcuts">{sections.map(({id,label,Icon})=><button key={id} onClick={()=>go(id,'shortcut')}><Icon size={48}/><span>{label}</span></button>)}</div>
       <div className="desktop-caption" aria-hidden="true"><span>Tom's personal desktop</span><span>{String(sections.findIndex(s=>s.id===active)+1).padStart(2,'0')} / 03</span></div>
       <div className="window-stage">
         <DesktopWindow {...windowProps('photo','about')} title="me.jpg - Picture Viewer" className="photo-window" icon={<ImageIcon size={16}/>} footer={<><span>me.jpg</span><button className="plain-button" onClick={()=>setPhotoZoom(!photoZoom)}>{photoZoom?'Fit to window':'100%'}</button></>}>

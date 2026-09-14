@@ -31,7 +31,7 @@ button:focus-visible,a:focus-visible { outline:3px solid #efb529; outline-offset
 .statusbar { height:30px; min-height:30px; display:flex; align-items:center; justify-content:space-between; padding:0 7px; font-size:16px; border-top:1px solid #ceccbc; }
 .taskbar { position:absolute; bottom:0; height:52px; width:100%; display:flex; gap:4px; align-items:center; background:linear-gradient(#3091fd,#1664e5 18%,#2260d3 80%,#1846ab); border-top:1px solid #94c4fc; z-index:1000; color:white; }
 .start-button { height:51px; border:0; border-right:2px solid #144c1f; border-radius:0 13px 13px 0; background:linear-gradient(#70ba5c,#32852b 30%,#389530 80%,#22601e); color:white; padding:0 23px 0 13px; display:flex; align-items:center; gap:8px; font-size:34px; font-style:italic; font-weight:bold; text-shadow:1px 2px #22551c; margin-right:9px; }
-.task-button { height:40px; width:210px; min-width:0; display:flex; align-items:center; gap:8px; border:1px solid #80b2fb; border-right-color:#1d4aac; border-bottom-color:#123d9f; border-radius:3px; padding:0 10px; background:#347fed; color:white; text-align:left; font-size:20px; box-shadow:inset 0 1px #ffffff25; }
+.task-button { height:42px; width:250px; min-width:0; display:flex; align-items:center; gap:8px; border:1px solid #80b2fb; border-right-color:#1d4aac; border-bottom-color:#123d9f; border-radius:3px; padding:0 10px; background:#347fed; color:white; text-align:left; font-size:20px; box-shadow:inset 0 1px #ffffff25; }
 .task-button.active { background:#174aa9; border-color:#123986; box-shadow:inset 1px 2px 4px #123575; }.task-button:hover { border-color:#c4dcff; }
 .tray { margin-left:auto; display:flex; height:51px; align-items:center; gap:13px; padding:0 16px; background:linear-gradient(#27b9f5,#0795e0); border-left:1px solid #155bba; font-size:18px; white-space:nowrap; }
 @media(max-width:1000px) { .main-window { left:35%; width:58%; }.photo-window { left:12%; width:29%; height:340px; } }
@@ -133,8 +133,9 @@ button:focus-visible,a:focus-visible { outline:3px solid #efb529; outline-offset
 .titlebar,.desktop-icons button,.task-button,.tray,.menubar,.statusbar,.menu-button,.plain-button,.address,.xp-button,.desktop-caption {font-size:16px;line-height:24px;}
 .titlebar {font-weight:700;}
 .desktop-icons button {text-shadow:1px 1px #16365b;}
-.desktop-icons button span {max-width:100%;overflow-wrap:break-word;font-size:26px;line-height:36px;}
-@media(min-width:641px){.desktop-icons {width:150px;}}
+.desktop-icons button span {max-width:100%;overflow-wrap:break-word;font-size:18px;line-height:26px;}
+.task-button,.tray {font-size:24px;line-height:32px;}
+@media(min-width:641px){.desktop-icons {width:120px;}}
 @media(max-width:640px){.desktop-icons button {width:100px;}}
 .paper h1,.contact-paper h1,.project-intro h1,.project-heading h1 {font-size:33px;line-height:1.5;font-weight:700;overflow-wrap:break-word;}
 .start-button {font-size:30px;font-style:italic;font-weight:700;font-family:var(--font-start);text-shadow:1px 1px 2px #1d4a1a;}
