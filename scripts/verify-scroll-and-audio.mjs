@@ -24,7 +24,7 @@ try {
   await page.mouse.move(title.x+100,title.y+10);await page.mouse.wheel(0,500);await page.waitForTimeout(800);
   assert.equal(await page.locator('main').getAttribute('data-section'),'projects','Window chrome must not navigate');
   await page.mouse.down();await page.mouse.move(title.x+160,title.y+50,{steps:10});await page.mouse.up();await page.waitForTimeout(900);
-  assert.equal(await page.locator('[data-window="projects"]').evaluate(el=>getComputedStyle(el).transform),'none','Title drag resets on release');
+  assert.notEqual(await page.locator('[data-window="projects"]').evaluate(el=>getComputedStyle(el).transform),'none','Title drag stays where released');
   await page.mouse.move(1300,800);await page.mouse.wheel(0,150);await page.waitForTimeout(800);
   assert.equal(await page.locator('main').getAttribute('data-section'),'contact','Background still advances');
   await page.getByRole('button',{name:'Start menu'}).click();await page.getByRole('menuitem',{name:'Replay intro'}).click();
@@ -34,7 +34,7 @@ try {
   await page.getByRole('button',{name:'Open desktop',exact:true}).click();
   await page.waitForSelector('.boot[data-revealed="true"]',{state:'attached'});
   assert.equal(await page.locator('.short-intro').evaluate(v=>v.paused||v.muted),false);
-  console.log('PASS: content/boundary/chrome scrolling, background navigation, drag-release reset, replay and button second-skip audio.');
+  console.log('PASS: content/boundary/chrome scrolling, background navigation, persistent title drag, replay and button second-skip audio.');
 }finally{await browser.close();}
 
 // Simulate an autoplay rejection, then use real playback after a trusted click.

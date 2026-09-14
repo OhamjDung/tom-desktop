@@ -1,7 +1,8 @@
 "use client";
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { AnimatePresence } from 'motion/react';
-import { ArrowLeft, ArrowRight, Check, Copy, ExternalLink, FileText, FolderOpen, Code2 as Github, ImageIcon, BriefcaseBusiness as Linkedin, Mail, Monitor, RotateCcw, Sparkles, Volume2 } from 'lucide-react';
+import { ArrowLeft, ArrowRight, Check, Copy, ExternalLink, Code2 as Github, BriefcaseBusiness as Linkedin, RotateCcw, Sparkles, Volume2 } from 'lucide-react';
+import { FileText, FolderOpen, ImageIcon, Mail, Monitor } from '@/components/desktop-icons';
 import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuCheckboxItem } from '@/components/ui/dropdown-menu';
 import { DesktopWindow } from '@/components/desktop-window';
 import { Boot } from '@/components/boot';
@@ -104,7 +105,7 @@ export default function Home() {
     <div className="wallpaper" style={{backgroundImage:`url('${assets.wallpaper}')`}}/>
     {!booting&&<Ambient enabled={ambient}/>}
     <div className="desktop-content" inert={booting}>
-      <div className="desktop-icons" aria-label="Desktop shortcuts">{sections.map(({id,label,Icon})=><button key={id} onClick={()=>go(id,'shortcut')}><Icon/><span>{label}</span></button>)}</div>
+      <div className="desktop-icons" aria-label="Desktop shortcuts">{sections.map(({id,label,Icon})=><button key={id} onClick={()=>go(id,'shortcut')}><Icon size={32}/><span>{label}</span></button>)}</div>
       <div className="desktop-caption" aria-hidden="true"><span>Tom's personal desktop</span><span>{String(sections.findIndex(s=>s.id===active)+1).padStart(2,'0')} / 03</span></div>
       <div className="window-stage">
         <DesktopWindow {...windowProps('photo','about')} title="me.jpg - Picture Viewer" className="photo-window" icon={<ImageIcon size={16}/>} footer={<><span>me.jpg</span><button className="plain-button" onClick={()=>setPhotoZoom(!photoZoom)}>{photoZoom?'Fit to window':'100%'}</button></>}>
@@ -128,7 +129,7 @@ export default function Home() {
       <div className="crt-overlay"/>
       <nav className="taskbar" aria-label="Portfolio navigation">
         <DropdownMenu><DropdownMenuTrigger asChild><button className="start-button" aria-label="Start menu"><Monitor/>start</button></DropdownMenuTrigger><DropdownMenuContent side="top" align="start" className="start-menu"><div className="start-profile"><img src={assets.portrait} alt=""/><strong>Tom Pham</strong></div>{sections.map(({id,label,Icon})=><DropdownMenuItem key={id} onSelect={()=>go(id,'shortcut')}><Icon/>{label}</DropdownMenuItem>)}<DropdownMenuSeparator/><DropdownMenuCheckboxItem checked={ambient} onCheckedChange={setAmbient}><Sparkles size={16}/>Ambient effects</DropdownMenuCheckboxItem><DropdownMenuItem onSelect={()=>{resetWindows();setCompleted(false);setActive('about');setOpen(['contact','projects','about','photo']);}}><RotateCcw/>Reset desktop</DropdownMenuItem><DropdownMenuItem onSelect={replayIntro}><Monitor/>Replay intro</DropdownMenuItem></DropdownMenuContent></DropdownMenu>
-        {sections.map(({id,label,Icon})=><button key={id} data-task={id} aria-controls={`window-${id}`} aria-pressed={open.includes(id)} className={`task-button ${active===id&&open.includes(id)?'active':''} ${open.includes(id)?'is-open':''}`} onClick={()=>go(id)}><Icon size={19}/><span>{label}</span></button>)}
+        {sections.map(({id,label,Icon})=><button key={id} data-task={id} aria-controls={`window-${id}`} aria-pressed={open.includes(id)} className={`task-button ${active===id&&open.includes(id)?'active':''} ${open.includes(id)?'is-open':''}`} onClick={()=>go(id)}><Icon size={16}/><span>{label}</span></button>)}
         <div className="tray"><Volume2 size={17} aria-label="Sound enabled"/><time suppressHydrationWarning>{clock}</time></div>
       </nav>
       <div className="sr-only" aria-live="polite">{sections.find(s=>s.id===active)?.label}{completed?'. Story complete. Taskbar buttons now toggle windows.':''}</div>

@@ -12,11 +12,11 @@ try {
   await page.mouse.move(title.x+70,title.y+15);await page.mouse.down();await page.mouse.move(title.x+150,title.y+55,{steps:8});await page.waitForTimeout(400);
   assert.notEqual(await win.evaluate(el=>getComputedStyle(el).transform),'none');
   await page.mouse.up();await page.waitForTimeout(900);
-  const corner=await win.locator('.bottom-left').boundingBox();
+  const parked=await win.evaluate(el=>getComputedStyle(el).transform);
   await win.locator('.bottom-left').focus();await page.keyboard.press('ArrowLeft');
   await page.waitForTimeout(11200);
   const transform=await win.evaluate(el=>getComputedStyle(el).transform);
-  assert.ok(transform==='none'||transform==='matrix(1, 0, 0, 1, 0, 0)',transform);
+  assert.equal(transform,parked,'Ten-second rotation reset preserves dragged placement');
   const assets=await page.locator('img').evaluateAll(imgs=>imgs.map(img=>({src:img.getAttribute('src'),ok:img.complete&&img.naturalWidth>0})));
   assert.ok(assets.every(img=>img.ok),JSON.stringify(assets));
   const canvas=page.locator('.aero-shards[data-ready="true"] canvas');
@@ -37,5 +37,5 @@ try {
     await page.waitForTimeout(200);
     assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth>window.innerWidth),false);
   }
-  console.log(JSON.stringify({passed:true,checks:['drag and click-off reset','ten-second reset','local assets loaded','320px narrow viewport'],graphics}));
+  console.log(JSON.stringify({passed:true,checks:['persistent title drag','ten-second rotation reset','local assets loaded','320px narrow viewport'],graphics}));
 } finally {await browser.close();}

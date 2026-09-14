@@ -2,7 +2,8 @@
 
 import { useEffect, useRef, useState, type ReactNode, type PointerEvent } from 'react';
 import { motion, useReducedMotion } from 'motion/react';
-import { Minus, Square, Copy, X, FileText } from 'lucide-react';
+import { Minus, Square, Copy, X } from 'lucide-react';
+import { FileText } from '@/components/desktop-icons';
 
 type Props = {
   id:string; title:string; className?:string; children:ReactNode; visible:boolean;
@@ -14,6 +15,7 @@ export function DesktopWindow({id,title,className='',children,visible,focused,z,
   const ref = useRef<HTMLElement>(null);
   const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const dirty=useRef(false);
+  const position=useRef({x:0,y:0});
   const gesture = useRef<{x:number;y:number;mode:string;start:typeof origin;rect:DOMRect;corner:string;axis?:'pitch'|'yaw'}|null>(null);
   const reduced = useReducedMotion();
   const [pose,setPose] = useState(origin);
@@ -22,8 +24,13 @@ export function DesktopWindow({id,title,className='',children,visible,focused,z,
   const [maximized,setMaximized] = useState(false);
   const [target,setTarget] = useState({x:0,y:600});
 
-  function restore() { gesture.current=null; setHeld(false); setPose(origin); setPivot('50% 50%'); }
-  function restoreInteraction() {restore();if(dirty.current){dirty.current=false;onRestore();}}
+  function restore() { position.current={x:0,y:0}; restoreInteraction(); }
+  function restoreInteraction() {
+    if(timer.current)clearTimeout(timer.current);
+    gesture.current=null;setHeld(false);setPose({...origin,...position.current});
+    // Keep the active hinge while the spring unwinds the actual released pose.
+    if(dirty.current){dirty.current=false;onRestore();}
+  }
   function scheduleReset() {
     if(timer.current) clearTimeout(timer.current);
     timer.current=setTimeout(restoreInteraction,10000);
@@ -40,8 +47,8 @@ export function DesktopWindow({id,title,className='',children,visible,focused,z,
     const scroll=()=>restoreInteraction();
     document.addEventListener('pointerdown',outside);
     document.addEventListener('scroll',scroll,true);
-    window.addEventListener('blur',restore);
-    return()=>{document.removeEventListener('pointerdown',outside);document.removeEventListener('scroll',scroll,true);window.removeEventListener('blur',restore);if(timer.current)clearTimeout(timer.current);};
+    window.addEventListener('blur',restoreInteraction);
+    return()=>{document.removeEventListener('pointerdown',outside);document.removeEventListener('scroll',scroll,true);window.removeEventListener('blur',restoreInteraction);if(timer.current)clearTimeout(timer.current);};
   },[]);
 
   function start(e:PointerEvent,mode:string,corner='50% 50%') {
@@ -50,8 +57,8 @@ export function DesktopWindow({id,title,className='',children,visible,focused,z,
     e.preventDefault();e.stopPropagation();onFocus();
     const rect=ref.current!.getBoundingClientRect();
     gesture.current={x:e.clientX,y:e.clientY,mode,start:pose,rect,corner};
-    dirty.current=true;
-    setPivot(corner);setHeld(true);scheduleReset();e.currentTarget.setPointerCapture(e.pointerId);
+    dirty.current=mode==='spin';
+    setPivot(corner);setHeld(true);if(mode==='spin')scheduleReset();e.currentTarget.setPointerCapture(e.pointerId);
   }
   function move(e:PointerEvent) {
     const g=gesture.current;if(!g)return;
@@ -66,17 +73,24 @@ export function DesktopWindow({id,title,className='',children,visible,focused,z,
       // Pitch follows vertical movement; yaw turns the page without screen-plane roll.
       setPose({...g.start,rx:Math.max(-limit,Math.min(limit,g.start.rx-dy*.25)),ry:Math.max(-yawLimit,Math.min(yawLimit,g.start.ry+dx*.35)),rz:0});
     } else {
-      setPose({...g.start,x:g.start.x+Math.max(12-g.rect.left,Math.min(window.innerWidth-g.rect.right-12,dx)),y:g.start.y+Math.max(6-g.rect.top,Math.min(window.innerHeight-90-g.rect.top,dy))});
+      position.current={x:g.start.x+Math.max(12-g.rect.left,Math.min(window.innerWidth-g.rect.right-12,dx)),y:g.start.y+Math.max(6-g.rect.top,Math.min(window.innerHeight-90-g.rect.top,dy))};
+      setPose({...g.start,...position.current});
     }
-    scheduleReset();
+    if(g.mode==='spin')scheduleReset();
   }
-  function end(){if(!gesture.current)return;if(timer.current)clearTimeout(timer.current);restoreInteraction();}
+  function end(){
+    const g=gesture.current;if(!g)return;
+    if(timer.current)clearTimeout(timer.current);
+    if(g.mode==='spin'){restoreInteraction();return;}
+    gesture.current=null;setHeld(false);
+  }
   return <motion.section ref={ref} id={`window-${id}`} data-window={id} data-visible={visible} aria-label={title} inert={!visible}
     className={`xp-window ${className} ${focused?'focused':'unfocused'} ${maximized?'maximized':''}`}
     style={{zIndex:z,transformOrigin:pivot,pointerEvents:visible?'auto':'none'}}
     animate={{x:visible?pose.x:target.x,y:visible?pose.y:target.y,rotateX:visible?pose.rx:0,rotateY:visible?pose.ry:0,rotateZ:visible?pose.rz:0,scale:visible?1:.015,opacity:visible?1:0}}
     initial={false} transition={reduced?{duration:0}:held?{duration:0}:{type:'spring',stiffness:260,damping:28}}
-    onPointerDown={()=>{onFocus();scheduleReset();}} onKeyDown={e=>{if(e.key==='Escape')restore();}}>
+    onAnimationComplete={()=>{if(!gesture.current)setPivot('50% 50%');}}
+    onPointerDown={onFocus} onKeyDown={e=>{if(e.key==='Escape')restore();}}>
     <header className="titlebar" onPointerDown={e=>start(e,'drag')} onPointerMove={move} onPointerUp={end} onPointerCancel={end} onDoubleClick={()=>{restore();setMaximized(!maximized);}}>
       {icon || <FileText size={16}/>}<span>{title}</span>
       <div className="window-controls">
