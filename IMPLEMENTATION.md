@@ -4,7 +4,7 @@ Built from the Figma storyboard and the supplied Astra brief. The original Figma
 
 ## Content and assets
 
-- Pixel typography and desktop icon styling take inspiration from https://os.henryheffernan.com/. Local regular/bold bitmap-style fonts come from 98.css; native 16px/32px icons come from React95. Sources and licenses are in `public/assets/PIXEL-ASSETS.md`. The XP palette and original wallpaper remain unchanged.
+- Pixel typography and desktop icon styling take inspiration from https://os.henryheffernan.com/. Local regular/bold bitmap-style fonts come from 98.css; native 16px/32px icons come from React95. Sources and licenses are in `public/assets/PIXEL-ASSETS.md`. The active wallpaper is the supplied Bliss-style sky and hill image at `public/assets/wallpaper-bliss.webp`; the previous city wallpaper is archived in `archived-assets/wallpapers/city-wallpaper.png`.
 - `lib/portfolio.ts`: Tom's name, UTD email, draft about copy, social URLs, asset paths, and local project collection.
 - `public/assets/`: exact Figma-exported wallpaper, computer photo, and portrait. These are local files, not expiring Figma links.
 - `assets.introLong` and `assets.introShort` point to the supplied MP4s, played with audio enabled. The long video starts on each page load. Scroll, swipe, keyboard skip, or Skip intro switches to the short video. A second skip reveals the desktop immediately while the short video's audio continues to its end. The hidden video stays mounted only until playback completes. Normal playback opens the desktop at the active video's end. A failed short video opens the desktop as an error fallback. Browsers that block audible autoplay display Play intro; the site never silently mutes the videos.

@@ -8,7 +8,7 @@ export const profile = {
 export const assets = {
   introLong: '/assets/IntroLong.mp4', introShort: '/assets/IntroShort.mp4',
   monitorFrame: null as string | null,
-  computer: '/assets/computer.png', wallpaper: '/assets/wallpaper.png', portrait: '/assets/portrait.png',
+  computer: '/assets/computer.png', wallpaper: '/assets/wallpaper-bliss.webp', portrait: '/assets/portrait.png',
 };
 export type Project = {
   id: string; slug: string; title: string; short_description: string;

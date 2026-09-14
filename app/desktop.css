@@ -7,7 +7,7 @@ button,a { -webkit-tap-highlight-color:transparent; }
 button { font:inherit; cursor:pointer; }
 button:focus-visible,a:focus-visible { outline:3px solid #efb529; outline-offset:3px; }
 .desktop { height:100dvh; width:100%; overflow:hidden; position:fixed; inset:0; color:#202421; background:#2673b5; font-family:var(--font-desktop); }
-.wallpaper { position:absolute; inset:0; background:url('/assets/wallpaper.png') center center/cover no-repeat; }
+.wallpaper { position:absolute; inset:0; background:url('/assets/wallpaper-bliss.webp') center center/cover no-repeat; }
 .desktop-icons { position:absolute; top:26px; left:20px; display:grid; gap:25px; width:82px; z-index:2; }
 .desktop-icons button { display:flex; flex-direction:column; align-items:center; gap:7px; background:none; border:1px solid transparent; color:white; padding:6px 2px; text-shadow:1px 2px 2px #123451; font-size:13px; }
 .desktop-icons button:hover,.desktop-icons button:focus-visible { background:#366bba66; border-color:#c8d9fb99; }
