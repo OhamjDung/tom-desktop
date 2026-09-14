@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import "./globals.css";
+import { ParentBridge } from "@/components/parent-bridge";
 
 export const metadata: Metadata = {
   title: "Tom Pham | Personal Desktop",
@@ -20,7 +21,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className="antialiased">{children}</body>
+      <body className="antialiased"><ParentBridge />{children}</body>
     </html>
   );
 }
