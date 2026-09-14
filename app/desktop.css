@@ -133,7 +133,9 @@ button:focus-visible,a:focus-visible { outline:3px solid #efb529; outline-offset
 .titlebar,.desktop-icons button,.task-button,.tray,.menubar,.statusbar,.menu-button,.plain-button,.address,.xp-button,.desktop-caption {font-size:11px;line-height:16px;}
 .titlebar {font-weight:700;}
 .desktop-icons button {text-shadow:1px 1px #16365b;}
-.desktop-icons button span {max-width:100%;overflow-wrap:break-word;}
+.desktop-icons button span {max-width:100%;overflow-wrap:break-word;font-size:17px;line-height:24px;}
+@media(min-width:641px){.desktop-icons {width:120px;}}
+@media(max-width:640px){.desktop-icons button {width:100px;}}
 .paper h1,.contact-paper h1,.project-intro h1,.project-heading h1 {font-size:22px;line-height:1.5;font-weight:700;overflow-wrap:break-word;}
 .start-button {font-size:22px;font-style:normal;font-weight:700;}
 .start-button .pixel-icon {width:32px!important;height:32px!important;}
