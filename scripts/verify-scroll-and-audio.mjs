@@ -43,8 +43,10 @@ try {
   const p=await restricted.newPage();
   await p.addInitScript(()=>{
     const play=HTMLMediaElement.prototype.play;
+    let clicked=false;
+    document.addEventListener('click',event=>{if(event.isTrusted)clicked=true;},true);
     HTMLMediaElement.prototype.play=function(){
-      if(!navigator.userActivation.hasBeenActive)return Promise.reject(new DOMException('User activation required','NotAllowedError'));
+      if(!clicked)return Promise.reject(new DOMException('User activation required','NotAllowedError'));
       return play.call(this);
     };
   });
