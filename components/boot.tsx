@@ -4,7 +4,7 @@ import { motion, useReducedMotion } from 'motion/react';
 import { Pause, Play } from 'lucide-react';
 import { assets } from '@/lib/portfolio';
 
-export function Boot({onComplete,onReveal}:{onComplete:()=>void;onReveal:()=>void}) {
+export function Boot({onComplete,onReveal,locked=false}:{onComplete:()=>void;onReveal:()=>void;locked?:boolean}) {
   const reduced=useReducedMotion();
   const shortVideo=useRef<HTMLVideoElement>(null);
   const [blocked,setBlocked]=useState(false);
@@ -24,17 +24,18 @@ export function Boot({onComplete,onReveal}:{onComplete:()=>void;onReveal:()=>voi
     if(revealedRef.current)return;
     const video=shortVideo.current;
     if(!video||video.paused){void play();return;}
+    if(locked)return;
     revealedRef.current=true;setRevealed(true);onReveal();
-  },[onReveal,play]);
+  },[onReveal,play,locked]);
   useEffect(()=>{
     const video=shortVideo.current;
     // Inside the 3D room, the parent posts start-intro when the camera reaches the monitor.
-    if(window.parent===window){void play();return()=>video?.pause();}
+    if(window.parent===window||locked){void play();return()=>video?.pause();}
     const onMessage=(e:MessageEvent)=>{if(e.data?.type==='start-intro'&&video?.paused&&!revealedRef.current)void play();};
     window.addEventListener('message',onMessage);
     window.parent.postMessage({type:'request-intro'},'*');
     return()=>{window.removeEventListener('message',onMessage);video?.pause();};
-  },[play]);
+  },[play,locked]);
   useEffect(()=>{
     if(revealed)return;
     const wheel=(e:WheelEvent)=>{if(e.ctrlKey||!e.deltaY)return;e.preventDefault();skip();};
@@ -54,7 +55,7 @@ export function Boot({onComplete,onReveal}:{onComplete:()=>void;onReveal:()=>voi
     <video ref={shortVideo} className="intro-video" playsInline preload="auto" poster={assets.computer} src={assets.introShort} aria-label="Computer startup" onEnded={onComplete} onError={onComplete}/>
     <div className="intro-controls">
       <button className="intro-pause" onClick={togglePause} aria-label={paused?'Resume intro':'Pause intro'} title={paused?'Resume intro':'Pause intro'}>{paused?<Play size={17}/>:<Pause size={17}/>}</button>
-      <button className="skip-boot" onClick={skip}>Open desktop</button>
+      {!locked&&<button className="skip-boot" onClick={skip}>Open desktop</button>}
     </div>
     {blocked&&<button className="play-intro" onClick={()=>void play()}><Play size={18}/>Play intro</button>}
   </motion.div>;

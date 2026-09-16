@@ -25,6 +25,8 @@ export default function Home() {
   const [started,setStarted]=useState(false);
   const startedRef=useRef(false);
   const [introSession,setIntroSession]=useState(0);
+  const embedded=typeof window!=='undefined'&&window.parent!==window;
+  const wakePending=useRef(false);
   const [active,setActive]=useState<Section>('about');
   const [open,setOpen]=useState<string[]>([]);
   const [focused,setFocused]=useState('about');
@@ -44,7 +46,10 @@ export default function Home() {
   const touch=useRef<{x:number;y:number;target:EventTarget|null}|null>(null);
   const copyTimer=useRef<ReturnType<typeof setTimeout>|null>(null);
   const finishBoot=useCallback(()=>{setBooting(false);scrollLock.current=Date.now()+500;},[]);
-  const completeIntro=useCallback(()=>{setBooting(false);setIntroMounted(false);},[]);
+  const completeIntro=useCallback(()=>{
+    setBooting(false);setIntroMounted(false);
+    if(wakePending.current){wakePending.current=false;startedRef.current=true;setStarted(true);setActive('about');setFocused('about');setOpen(groups.about);}
+  },[]);
   const replayIntro=()=>{setIntroSession(n=>n+1);setIntroMounted(true);setBooting(true);};
 
   const focus=(id:string)=>{setFocused(id);setOrder(old=>[...old.filter(x=>x!==id),id]);};
@@ -72,8 +77,9 @@ export default function Home() {
   useEffect(()=>{
     if(window.parent===window)return;
     const wake=(event:MessageEvent)=>{
-      if(event.source!==window.parent||event.data?.type!=='wake-desktop'||startedRef.current)return;
-      startedRef.current=true;setStarted(true);setActive('about');setFocused('about');setOpen(groups.about);
+      if(event.source!==window.parent||event.data?.type!=='wake-desktop'||startedRef.current||wakePending.current)return;
+      // The room woke the monitor: run the intro to completion, then open About.
+      wakePending.current=true;setIntroSession(n=>n+1);setIntroMounted(true);setBooting(true);
     };
     window.addEventListener('message',wake);
     // The room may reach the desk before this iframe has hydrated.
@@ -145,7 +151,7 @@ export default function Home() {
       </nav>
       <div className="sr-only" aria-live="polite">{sections.find(s=>s.id===active)?.label}{completed?'. Story complete. Taskbar buttons now toggle windows.':''}</div>
     </div>
-    <AnimatePresence>{introMounted&&<Boot key={introSession} onReveal={finishBoot} onComplete={completeIntro}/>}</AnimatePresence>
+    <AnimatePresence>{introMounted&&<Boot key={introSession} locked={embedded} onReveal={finishBoot} onComplete={completeIntro}/>}</AnimatePresence>
   </main>;
 }
 
