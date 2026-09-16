@@ -20,11 +20,12 @@ function ProjectImage({src,alt}:{src:string;alt:string}) {
 }
 
 export default function Home() {
-  const [booting,setBooting]=useState(true);
-  const [introMounted,setIntroMounted]=useState(true);
+  const [booting,setBooting]=useState(false);
+  const [introMounted,setIntroMounted]=useState(false);
+  const [started,setStarted]=useState(false);
   const [introSession,setIntroSession]=useState(0);
   const [active,setActive]=useState<Section>('about');
-  const [open,setOpen]=useState<string[]>(['contact','projects','photo','about']);
+  const [open,setOpen]=useState<string[]>([]);
   const [focused,setFocused]=useState('about');
   const [order,setOrder]=useState(['contact','projects','about','photo']);
   const [completed,setCompleted]=useState(false);
@@ -48,7 +49,7 @@ export default function Home() {
   const focus=(id:string)=>{setFocused(id);setOrder(old=>[...old.filter(x=>x!==id),id]);};
   const resetWindows=()=>{setReset(v=>v+1);setOrder(['contact','projects','about','photo']);};
   function go(id:Section,via:'task'|'story'|'shortcut'='task') {
-    resetWindows();setActive(id);setFocused(id);setSelected(null);
+    setStarted(true);resetWindows();setActive(id);setFocused(id);setSelected(null);
     setOrder(['contact','projects','photo','about'].filter(x=>!groups[id].includes(x)).concat(groups[id]));
     setOpen(old=>completed&&via==='task'?(groups[id].some(x=>old.includes(x))?old.filter(x=>!groups[id].includes(x)):window.innerWidth<=640?groups[id]:[...old,...groups[id]]):groups[id]);
   }
@@ -61,7 +62,8 @@ export default function Home() {
     if(booting)return;
     if(Date.now()<scrollLock.current)return;
     scrollLock.current=Date.now()+650;resetWindows();
-    const current=sections.findIndex(s=>s.id===active);
+    if(!started&&direction<0)return;
+    const current=started?sections.findIndex(s=>s.id===active):-1;
     const next=Math.max(0,Math.min(2,current+direction));
     if(direction>0&&next===2)setCompleted(true);
     go(sections[next].id,'story');
@@ -93,15 +95,15 @@ export default function Home() {
     const onTouchEnd=(e:TouchEvent)=>{if(!touch.current)return;const dy=touch.current.y-e.changedTouches[0].clientY,dx=touch.current.x-e.changedTouches[0].clientX;if(Math.abs(dy)>65&&Math.abs(dy)>Math.abs(dx)&&isBackground(touch.current.target))advance(Math.sign(dy));touch.current=null;};
     window.addEventListener('wheel',onWheel,{passive:false});window.addEventListener('keydown',key);window.addEventListener('touchstart',onTouchStart,{passive:true});window.addEventListener('touchend',onTouchEnd,{passive:true});
     return()=>{window.removeEventListener('wheel',onWheel);window.removeEventListener('keydown',key);window.removeEventListener('touchstart',onTouchStart);window.removeEventListener('touchend',onTouchEnd);};
-  },[active,completed,booting]);
+  },[active,completed,booting,started]);
   async function copyEmail() {
     try {await navigator.clipboard.writeText(profile.email);setCopied(true);setCopyError(false);if(copyTimer.current)clearTimeout(copyTimer.current);copyTimer.current=setTimeout(()=>setCopied(false),2500);}catch{setCopyError(true);}
   }
   function windowProps(id:string,task:Section){return {id,task,visible:open.includes(id),focused:focused===id,z:10+order.indexOf(id),reset,onFocus:()=>focus(id),onClose:()=>close(id),onRestore:()=>setOrder(['contact','projects','about','photo'])};}
 
-  return <main className="desktop" data-section={active} data-story-complete={completed}>
+  return <main className="desktop" data-started={started} data-section={started?active:'blank'} data-story-complete={completed} aria-label={started?'Tom Pham desktop':'Tom Pham portfolio'} tabIndex={-1}>
     <div className="wallpaper" style={{backgroundImage:`url('${assets.wallpaper}')`}}/>
-    <div className="desktop-content" inert={booting}>
+    <div className="desktop-content" inert={booting||!started}>
       <div className="desktop-icons" aria-label="Desktop shortcuts">{sections.map(({id,label,Icon})=><button key={id} onClick={()=>go(id,'shortcut')}><Icon size={48}/><span>{label}</span></button>)}</div>
       <div className="desktop-caption" aria-hidden="true"><span>Tom's personal desktop</span><span>{String(sections.findIndex(s=>s.id===active)+1).padStart(2,'0')} / 03</span></div>
       <div className="window-stage">
