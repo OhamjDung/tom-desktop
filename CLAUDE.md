@@ -50,3 +50,9 @@ Node >= 22.13 required. `scripts/run-framework.mjs` picks the runner based on `.
 - Social links in `profile` are intentionally empty strings -> UI renders "Coming soon" rather than fake URLs. Keep that behaviour until real links exist.
 - Pending assets (`bootVideo`, `monitorFrame`) are `null`; code already branches on them — supply a path in `lib/portfolio.ts` to activate.
 - `.env` is gitignored; `.env.example` documents the Supabase vars.
+
+## Supabase (projects feed)
+
+- Project ref `nrgwvywbzesljpyyrnfi` ("OhamjDung's Project", org owlzfxmxnzuamdywttpr). Schema in `supabase/schema.sql` already applied; `project-images` public bucket exists.
+- `SUPABASE_URL` + `SUPABASE_PUBLISHABLE_KEY` (anon key) set in local `.env` and on Vercel production. `/api/projects` returns `source:'supabase'` when live.
+- Add/edit projects in the Supabase dashboard Table Editor; set `status='published'` to show. Image URLs must be absolute (`safeLink` drops relative paths): upload to `project-images` bucket, use the public URL `https://nrgwvywbzesljpyyrnfi.supabase.co/storage/v1/object/public/project-images/<file>`.
