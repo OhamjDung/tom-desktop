@@ -1,8 +1,8 @@
 export const profile = {
   name: 'Tom Pham', email: 'QuocDung.Pham@UTDallas.edu', linkedin: '', github: '',
-  intro: 'I build thoughtful digital experiences with a focus on interaction, visual systems, and useful products.',
-  about: 'I like work that feels personal, precise, and a little unexpected.',
-  currently: 'Exploring product storytelling and the space between design and engineering.',
+  intro: "I turn messy data into decisions. Pipelines that don't lose records, dashboards people actually read, and models that hold up when the data changes.",
+  about: 'Software engineer by training, analyst by habit. I like problems that start with "what does this data say?" and end with something shipped.',
+  currently: 'Currently: CS at UT Dallas, leading student teams through hackathons and semester projects, and building AI agents that do the analysis for you.',
 };
 // The final transparent monitor frame can be connected when supplied.
 export const assets = {
