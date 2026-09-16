@@ -98,7 +98,7 @@ export default function Home() {
       if(delta<0&&window.parent!==window){wheel.current.total=0;window.parent.postMessage({type:'room-wheel',deltaY:delta},'*');return;}
       if(now-wheel.current.last>180||Math.sign(delta)!==Math.sign(wheel.current.total))wheel.current.total=0;
       wheel.current.last=now;wheel.current.total+=delta;
-      if(Math.abs(wheel.current.total)>75){advance(Math.sign(wheel.current.total));wheel.current.total=0;}
+      if(Math.abs(wheel.current.total)>25){advance(Math.sign(wheel.current.total));wheel.current.total=0;}
     };
     const key=(e:KeyboardEvent)=>{
       if((e.target as HTMLElement).closest('button,a,input,textarea,[role="menu"]') || !isBackground(e.target))return;
