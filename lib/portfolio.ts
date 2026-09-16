@@ -1,5 +1,5 @@
 export const profile = {
-  name: 'Tom Pham', email: 'QuocDung.Pham@UTDallas.edu', linkedin: '', github: '',
+  name: 'Tom Pham', email: 'QuocDung.Pham@UTDallas.edu', linkedin: 'https://www.linkedin.com/in/datatompham/', github: 'https://github.com/OhamjDung',
   intro: "I turn messy data into decisions. Pipelines that don't lose records, dashboards people actually read, and models that hold up when the data changes.",
   about: 'Software engineer by training, analyst by habit. I like problems that start with "what does this data say?" and end with something shipped.',
   currently: 'Currently: CS at UT Dallas, leading student teams through hackathons and semester projects, and building AI agents that do the analysis for you.',
