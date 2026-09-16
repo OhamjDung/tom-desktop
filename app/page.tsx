@@ -95,6 +95,7 @@ export default function Home() {
       if(e.ctrlKey||!isBackground(e.target)){wheel.current.total=0;return;}
       e.preventDefault();setReset(v=>v+1);
       const now=Date.now(),delta=e.deltaY*(e.deltaMode===1?16:e.deltaMode===2?window.innerHeight:1);
+      if(delta<0&&window.parent!==window){wheel.current.total=0;window.parent.postMessage({type:'room-wheel',deltaY:delta},'*');return;}
       if(now-wheel.current.last>180||Math.sign(delta)!==Math.sign(wheel.current.total))wheel.current.total=0;
       wheel.current.last=now;wheel.current.total+=delta;
       if(Math.abs(wheel.current.total)>75){advance(Math.sign(wheel.current.total));wheel.current.total=0;}
@@ -104,7 +105,7 @@ export default function Home() {
       if(['PageDown','ArrowDown','PageUp','ArrowUp',' '].includes(e.key)){e.preventDefault();advance(['PageUp','ArrowUp'].includes(e.key)?-1:1);}
     };
     const onTouchStart=(e:TouchEvent)=>{touch.current={x:e.touches[0].clientX,y:e.touches[0].clientY,target:e.target};};
-    const onTouchEnd=(e:TouchEvent)=>{if(!touch.current)return;const dy=touch.current.y-e.changedTouches[0].clientY,dx=touch.current.x-e.changedTouches[0].clientX;if(Math.abs(dy)>65&&Math.abs(dy)>Math.abs(dx)&&isBackground(touch.current.target))advance(Math.sign(dy));touch.current=null;};
+    const onTouchEnd=(e:TouchEvent)=>{if(!touch.current)return;const dy=touch.current.y-e.changedTouches[0].clientY,dx=touch.current.x-e.changedTouches[0].clientX;if(Math.abs(dy)>65&&Math.abs(dy)>Math.abs(dx)&&isBackground(touch.current.target)){if(dy<0&&window.parent!==window)window.parent.postMessage({type:'room-wheel',deltaY:dy},'*');else advance(Math.sign(dy));}touch.current=null;};
     window.addEventListener('wheel',onWheel,{passive:false});window.addEventListener('keydown',key);window.addEventListener('touchstart',onTouchStart,{passive:true});window.addEventListener('touchend',onTouchEnd,{passive:true});
     return()=>{window.removeEventListener('wheel',onWheel);window.removeEventListener('keydown',key);window.removeEventListener('touchstart',onTouchStart);window.removeEventListener('touchend',onTouchEnd);};
   },[active,completed,booting,started]);
