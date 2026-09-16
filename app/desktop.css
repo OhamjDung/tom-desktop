@@ -148,3 +148,5 @@ button:focus-visible,a:focus-visible { outline:3px solid #efb529; outline-offset
 .window-controls svg {stroke-width:2;stroke-linecap:square;stroke-linejoin:miter;shape-rendering:crispEdges;}
 .contact-stamp.pixel-icon {width:32px!important;height:32px!important;}
 @media(max-width:640px){.start-button{font-size:0;flex:0 0 44px;padding:0;justify-content:center;}.start-button .pixel-icon{width:32px!important;height:32px!important;}.task-button{gap:4px;padding:0 4px;}.paper p{font-size:21px;line-height:1.7;}.paper dl{font-size:16px;line-height:1.7;}.email-address{font-size:21px;}.social-links{font-size:16px;gap:12px;}}
+
+.project-desc { white-space: pre-line; }
