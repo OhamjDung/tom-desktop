@@ -23,6 +23,7 @@ export default function Home() {
   const [booting,setBooting]=useState(false);
   const [introMounted,setIntroMounted]=useState(false);
   const [started,setStarted]=useState(false);
+  const startedRef=useRef(false);
   const [introSession,setIntroSession]=useState(0);
   const [active,setActive]=useState<Section>('about');
   const [open,setOpen]=useState<string[]>([]);
@@ -49,7 +50,7 @@ export default function Home() {
   const focus=(id:string)=>{setFocused(id);setOrder(old=>[...old.filter(x=>x!==id),id]);};
   const resetWindows=()=>{setReset(v=>v+1);setOrder(['contact','projects','about','photo']);};
   function go(id:Section,via:'task'|'story'|'shortcut'='task') {
-    setStarted(true);resetWindows();setActive(id);setFocused(id);setSelected(null);
+    startedRef.current=true;setStarted(true);resetWindows();setActive(id);setFocused(id);setSelected(null);
     setOrder(['contact','projects','photo','about'].filter(x=>!groups[id].includes(x)).concat(groups[id]));
     setOpen(old=>completed&&via==='task'?(groups[id].some(x=>old.includes(x))?old.filter(x=>!groups[id].includes(x)):window.innerWidth<=640?groups[id]:[...old,...groups[id]]):groups[id]);
   }
@@ -68,6 +69,17 @@ export default function Home() {
     if(direction>0&&next===2)setCompleted(true);
     go(sections[next].id,'story');
   }
+  useEffect(()=>{
+    if(window.parent===window)return;
+    const wake=(event:MessageEvent)=>{
+      if(event.source!==window.parent||event.data?.type!=='wake-desktop'||startedRef.current)return;
+      startedRef.current=true;setStarted(true);setActive('about');setFocused('about');setOpen(groups.about);
+    };
+    window.addEventListener('message',wake);
+    // The room may reach the desk before this iframe has hydrated.
+    window.parent.postMessage({type:'desktop-ready'},'*');
+    return()=>window.removeEventListener('message',wake);
+  },[]);
   useEffect(()=>{
     const controller=new AbortController();
     fetch('/api/projects',{signal:controller.signal}).then(r=>{if(!r.ok)throw new Error('Projects unavailable');return r.json() as Promise<{projects:Project[];source:string}>;}).then(data=>{if(!Array.isArray(data.projects))throw new Error('Invalid feed');setProjects(data.projects);setFeedFailed(data.source==='fallback');}).catch(e=>{if(e.name!=='AbortError')setFeedFailed(true);}).finally(()=>{if(!controller.signal.aborted)setLoading(false);});
