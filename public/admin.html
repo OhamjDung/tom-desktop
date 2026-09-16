@@ -1,0 +1,229 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Projects Admin</title>
+<style>
+  :root { color-scheme: light; }
+  * { box-sizing: border-box; }
+  body { margin: 0; font: 14px/1.4 Tahoma, Verdana, system-ui, sans-serif; background: #3a6ea5; color: #000; }
+  .win { max-width: 1100px; margin: 24px auto; background: #ece9d8; border: 1px solid #0831d9; border-radius: 8px 8px 0 0; box-shadow: 0 8px 30px rgba(0,0,0,.35); }
+  .title { background: linear-gradient(#0a246a, #3a6ea5 40%, #0a246a); color: #fff; font-weight: bold; padding: 8px 12px; border-radius: 7px 7px 0 0; display: flex; justify-content: space-between; align-items: center; }
+  .title button { background: #c75050; color: #fff; border: 1px solid #fff; border-radius: 3px; padding: 2px 8px; cursor: pointer; }
+  .body { padding: 16px; display: grid; grid-template-columns: 300px 1fr; gap: 16px; }
+  @media (max-width: 800px) { .body { grid-template-columns: 1fr; } }
+  .panel { background: #fff; border: 1px solid #919b9c; padding: 12px; }
+  h2 { font-size: 15px; margin: 0 0 10px; }
+  label { display: block; font-weight: bold; margin: 10px 0 3px; }
+  input[type=text], input[type=number], input[type=email], input[type=password], input[type=url], textarea, select { width: 100%; padding: 5px 6px; border: 1px solid #7f9db9; font: inherit; }
+  textarea { min-height: 90px; resize: vertical; }
+  .row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .row3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; }
+  button { font: inherit; padding: 5px 14px; border: 1px solid #003c74; border-radius: 3px; background: linear-gradient(#fff, #ecebe5); cursor: pointer; }
+  button.primary { font-weight: bold; }
+  button.danger { color: #a00; }
+  button:disabled { opacity: .5; cursor: default; }
+  .list { list-style: none; margin: 0; padding: 0; max-height: 70vh; overflow: auto; }
+  .list li { padding: 6px 8px; border-bottom: 1px solid #eee; cursor: pointer; display: flex; justify-content: space-between; gap: 8px; }
+  .list li:hover, .list li.active { background: #316ac5; color: #fff; }
+  .list small { opacity: .7; }
+  .thumbs { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 6px; }
+  .thumbs figure { margin: 0; position: relative; }
+  .thumbs img { width: 96px; height: 72px; object-fit: cover; border: 1px solid #919b9c; display: block; }
+  .thumbs button { position: absolute; top: -6px; right: -6px; padding: 0 6px; line-height: 18px; border-radius: 9px; background: #c75050; color: #fff; border-color: #fff; }
+  .actions { display: flex; gap: 8px; margin-top: 16px; flex-wrap: wrap; }
+  .status { margin-top: 10px; min-height: 1.4em; color: #0a246a; }
+  .status.err { color: #a00; }
+  .login { max-width: 360px; margin: 80px auto; }
+  .check { display: flex; align-items: center; gap: 6px; margin-top: 10px; font-weight: bold; }
+  .check input { width: auto; }
+  progress { width: 100%; }
+</style>
+</head>
+<body>
+
+<div class="win login" id="login">
+  <div class="title">Sign in</div>
+  <div class="panel" style="margin:12px">
+    <label>Email</label><input type="email" id="email" autocomplete="username">
+    <label>Password</label><input type="password" id="password" autocomplete="current-password">
+    <div class="actions"><button class="primary" id="loginBtn">Sign in</button></div>
+    <div class="status" id="loginStatus"></div>
+  </div>
+</div>
+
+<div class="win" id="app" hidden>
+  <div class="title"><span>Projects Admin</span><span><span id="who" style="font-weight:normal;margin-right:10px"></span><button id="logout">Sign out</button></span></div>
+  <div class="body">
+    <div class="panel">
+      <div class="actions" style="margin:0 0 10px"><button class="primary" id="newBtn">+ New project</button><button id="refreshBtn">Refresh</button></div>
+      <ul class="list" id="list"></ul>
+    </div>
+    <div class="panel">
+      <h2 id="formTitle">New project</h2>
+      <form id="form">
+        <input type="hidden" name="id">
+        <div class="row">
+          <div><label>Title *</label><input type="text" name="title" required></div>
+          <div><label>Slug (url name)</label><input type="text" name="slug" placeholder="auto from title"></div>
+        </div>
+        <label>Short description (card)</label><input type="text" name="short_description">
+        <label>Description (full)</label><textarea name="description"></textarea>
+        <div class="row3">
+          <div><label>Role</label><input type="text" name="role" placeholder="Design & development"></div>
+          <div><label>Year</label><input type="text" name="year" placeholder="2026"></div>
+          <div><label>Sort order</label><input type="number" name="sort_order" value="0"></div>
+        </div>
+        <label>Tags (comma separated)</label><input type="text" name="tags" placeholder="React, Three.js, Figma">
+        <div class="row3">
+          <div><label>Live URL</label><input type="url" name="live_url"></div>
+          <div><label>GitHub URL</label><input type="url" name="github_url"></div>
+          <div><label>Case study URL</label><input type="url" name="case_study_url"></div>
+        </div>
+        <label>Cover image</label>
+        <input type="file" id="coverFile" accept="image/*">
+        <input type="hidden" name="cover_image_url">
+        <div class="thumbs" id="coverThumb"></div>
+        <label>Gallery images</label>
+        <input type="file" id="galleryFiles" accept="image/*" multiple>
+        <div class="thumbs" id="galleryThumbs"></div>
+        <progress id="progress" hidden></progress>
+        <div class="row">
+          <div><label>Status</label><select name="status"><option value="draft">draft (hidden)</option><option value="published">published</option></select></div>
+          <div><label class="check" style="margin-top:32px"><input type="checkbox" name="featured"> Featured</label></div>
+        </div>
+        <div class="actions">
+          <button type="submit" class="primary" id="saveBtn">Save</button>
+          <button type="button" id="deleteBtn" class="danger" hidden>Delete</button>
+          <a id="viewLink" href="/" target="_blank" style="align-self:center">Open desktop ↗</a>
+        </div>
+        <div class="status" id="status"></div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script>
+const SUPABASE_URL = 'https://nrgwvywbzesljpyyrnfi.supabase.co';
+const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5yZ3d2eXdiemVzbGpweXlybmZpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTgyMTc1NjAsImV4cCI6MjA3Mzc5MzU2MH0.AgdWaPnPvYGGe3YlYp9HYuLyUwMW1nZgsQMnkKilbZo';
+const BUCKET = 'project-images';
+const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+const $ = (id) => document.getElementById(id);
+const form = $('form');
+let projects = [];
+let gallery = [];
+
+function setStatus(msg, err = false) { const el = $('status'); el.textContent = msg; el.className = 'status' + (err ? ' err' : ''); }
+function slugify(s) { return s.toLowerCase().trim().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, ''); }
+
+async function login() {
+  const email = $('email').value.trim(), password = $('password').value;
+  $('loginStatus').textContent = 'Signing in…';
+  const { error } = await sb.auth.signInWithPassword({ email, password });
+  $('loginStatus').textContent = error ? error.message : '';
+  if (!error) boot();
+}
+async function boot() {
+  const { data: { session } } = await sb.auth.getSession();
+  $('login').hidden = !!session; $('app').hidden = !session;
+  if (!session) return;
+  $('who').textContent = session.user.email;
+  await load();
+}
+async function load() {
+  const { data, error } = await sb.from('projects').select('*').order('sort_order', { ascending: true });
+  if (error) return setStatus(error.message, true);
+  projects = data; renderList();
+}
+function renderList() {
+  const current = form.id.value;
+  $('list').innerHTML = projects.map(p => `<li data-id="${p.id}" class="${p.id === current ? 'active' : ''}"><span>${escapeHtml(p.title)}</span><small>${p.status}${p.featured ? ' ★' : ''}</small></li>`).join('') || '<li><small>No projects yet</small></li>';
+}
+function escapeHtml(s) { return String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c])); }
+
+function fill(p) {
+  form.reset(); gallery = [];
+  form.id.value = p?.id || '';
+  if (p) {
+    for (const k of ['title', 'slug', 'short_description', 'description', 'role', 'year', 'sort_order', 'live_url', 'github_url', 'case_study_url', 'cover_image_url', 'status']) form[k].value = p[k] ?? '';
+    form.tags.value = (p.tags || []).join(', ');
+    form.featured.checked = !!p.featured;
+    gallery = [...(p.gallery_image_urls || [])];
+  } else {
+    form.status.value = 'draft';
+    form.sort_order.value = projects.length;
+  }
+  $('formTitle').textContent = p ? `Edit: ${p.title}` : 'New project';
+  $('deleteBtn').hidden = !p;
+  renderThumbs(); renderList(); setStatus('');
+}
+function renderThumbs() {
+  const cover = form.cover_image_url.value;
+  $('coverThumb').innerHTML = cover ? `<figure><img src="${cover}"><button type="button" data-clear-cover>×</button></figure>` : '';
+  $('galleryThumbs').innerHTML = gallery.map((u, i) => `<figure><img src="${u}"><button type="button" data-remove="${i}">×</button></figure>`).join('');
+}
+
+async function upload(file) {
+  const ext = (file.name.split('.').pop() || 'png').toLowerCase();
+  const path = `${slugify(form.title.value || 'project') || 'project'}/${Date.now()}-${Math.random().toString(36).slice(2, 7)}.${ext}`;
+  const { error } = await sb.storage.from(BUCKET).upload(path, file, { cacheControl: '31536000', upsert: false });
+  if (error) throw error;
+  return sb.storage.from(BUCKET).getPublicUrl(path).data.publicUrl;
+}
+async function uploadMany(files, each) {
+  const bar = $('progress'); bar.hidden = false; bar.max = files.length; bar.value = 0;
+  try { for (const f of files) { each(await upload(f)); bar.value++; renderThumbs(); } }
+  catch (e) { setStatus('Upload failed: ' + e.message, true); }
+  finally { bar.hidden = true; }
+}
+
+$('coverFile').onchange = (e) => { if (e.target.files[0]) uploadMany([e.target.files[0]], (u) => { form.cover_image_url.value = u; }); e.target.value = ''; };
+$('galleryFiles').onchange = (e) => { uploadMany([...e.target.files], (u) => gallery.push(u)); e.target.value = ''; };
+document.addEventListener('click', (e) => {
+  if (e.target.dataset.clearCover !== undefined) { form.cover_image_url.value = ''; renderThumbs(); }
+  if (e.target.dataset.remove !== undefined) { gallery.splice(+e.target.dataset.remove, 1); renderThumbs(); }
+  const li = e.target.closest('li[data-id]'); if (li) fill(projects.find(p => p.id === li.dataset.id));
+});
+
+form.onsubmit = async (e) => {
+  e.preventDefault();
+  const row = {
+    title: form.title.value.trim(),
+    slug: slugify(form.slug.value || form.title.value),
+    short_description: form.short_description.value.trim(),
+    description: form.description.value.trim(),
+    role: form.role.value.trim(), year: form.year.value.trim(),
+    sort_order: Number(form.sort_order.value) || 0,
+    tags: form.tags.value.split(',').map(s => s.trim()).filter(Boolean),
+    live_url: form.live_url.value.trim(), github_url: form.github_url.value.trim(), case_study_url: form.case_study_url.value.trim(),
+    cover_image_url: form.cover_image_url.value, gallery_image_urls: gallery,
+    status: form.status.value, featured: form.featured.checked,
+  };
+  $('saveBtn').disabled = true; setStatus('Saving…');
+  const id = form.id.value;
+  const q = id ? sb.from('projects').update(row).eq('id', id) : sb.from('projects').insert(row);
+  const { data, error } = await q.select().single();
+  $('saveBtn').disabled = false;
+  if (error) return setStatus(error.message, true);
+  await load(); fill(data); setStatus('Saved. Live site updates within ~60s.');
+};
+$('deleteBtn').onclick = async () => {
+  if (!confirm(`Delete "${form.title.value}"? Cannot undo.`)) return;
+  const { error } = await sb.from('projects').delete().eq('id', form.id.value);
+  if (error) return setStatus(error.message, true);
+  await load(); fill(null); setStatus('Deleted.');
+};
+$('newBtn').onclick = () => fill(null);
+$('refreshBtn').onclick = load;
+$('loginBtn').onclick = login;
+$('password').onkeydown = (e) => { if (e.key === 'Enter') login(); };
+$('logout').onclick = async () => { await sb.auth.signOut(); boot(); };
+
+boot().then(() => { if (!$('app').hidden) fill(null); });
+</script>
+</body>
+</html>
