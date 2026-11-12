@@ -6,7 +6,7 @@ import { FileText, FolderOpen, ImageIcon, Mail, Monitor } from '@/components/des
 import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator } from '@/components/ui/dropdown-menu';
 import { DesktopWindow } from '@/components/desktop-window';
 import { Boot } from '@/components/boot';
-import { assets, profile, fallbackProjects, type Project } from '@/lib/portfolio';
+import { assets, profile, projects, type Project } from '@/lib/portfolio';
 import './desktop.css';
 
 type Section='about'|'projects'|'contact';
@@ -36,9 +36,6 @@ export default function Home() {
   const [clock,setClock]=useState('');
   const [copied,setCopied]=useState(false);
   const [copyError,setCopyError]=useState(false);
-  const [projects,setProjects]=useState<Project[]>(fallbackProjects);
-  const [loading,setLoading]=useState(true);
-  const [feedFailed,setFeedFailed]=useState(false);
   const [selected,setSelected]=useState<Project|null>(null);
   const [photoZoom,setPhotoZoom]=useState(false);
   const scrollLock=useRef(0);
@@ -75,7 +72,7 @@ export default function Home() {
     go(sections[next].id,'story');
   }
   useEffect(()=>{
-    if(window.parent===window)return;
+    if(window.parent===window){/* Opened directly, outside the 3D room: show the desktop instead of a black page. */const id=requestAnimationFrame(()=>{startedRef.current=true;setStarted(true);setOpen(groups.about);});return()=>cancelAnimationFrame(id);}
     const wake=(event:MessageEvent)=>{
       if(event.source!==window.parent||event.data?.type!=='wake-desktop'||startedRef.current||wakePending.current)return;
       // The room woke the monitor: run the intro to completion, then open About.
@@ -85,11 +82,6 @@ export default function Home() {
     // The room may reach the desk before this iframe has hydrated.
     window.parent.postMessage({type:'desktop-ready'},'*');
     return()=>window.removeEventListener('message',wake);
-  },[]);
-  useEffect(()=>{
-    const controller=new AbortController();
-    fetch('/api/projects',{signal:controller.signal}).then(r=>{if(!r.ok)throw new Error('Projects unavailable');return r.json() as Promise<{projects:Project[];source:string}>;}).then(data=>{if(!Array.isArray(data.projects))throw new Error('Invalid feed');setProjects(data.projects);setFeedFailed(data.source==='fallback');}).catch(e=>{if(e.name!=='AbortError')setFeedFailed(true);}).finally(()=>{if(!controller.signal.aborted)setLoading(false);});
-    return()=>controller.abort();
   },[]);
   useEffect(()=>{const update=()=>setClock(new Date().toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit'}));update();const timer=setInterval(update,30000);return()=>clearInterval(timer);},[]);
   useEffect(()=>()=>{if(copyTimer.current)clearTimeout(copyTimer.current);},[]);
@@ -132,10 +124,10 @@ export default function Home() {
           <div className="menubar"><WindowMenu label="File" onClose={()=>close('about')}/><WindowMenu label="View" onClose={()=>close('about')} onReset={resetWindows}/></div>
           <div className="paper" data-scrollable><p className="file-label">PERSONAL / ABOUT ME</p><h1>Hi, I'm Tom.</h1><p>{profile.intro}</p><p>{profile.about}</p><hr/><dl><dt>Focus</dt><dd>SWE, Data Analysis, AI Engineering</dd><dt>Tools</dt><dd>Tableau, PowerBI, Python, SQL, Snowflake</dd></dl><p className="currently">{profile.currently}</p><img className="mobile-portrait" src={assets.portrait} alt="Tom Pham"/></div>
         </DesktopWindow>
-        <DesktopWindow {...windowProps('projects','projects')} title="projects.exe - Explorer" className="projects-window" icon={<FolderOpen size={16}/>} footer={<><span>{loading?'Loading projects...':`${projects.length} ${projects.length===1?'project':'projects'}`}</span><span>{feedFailed?'Saved collection':'Selected work'}</span></>}>
+        <DesktopWindow {...windowProps('projects','projects')} title="projects.exe - Explorer" className="projects-window" icon={<FolderOpen size={16}/>} footer={<><span>{`${projects.length} ${projects.length===1?'project':'projects'}`}</span><span>Selected work</span></>}>
           <div className="explorer-toolbar"><button aria-label="Back to projects" title="Back to projects" disabled={!selected} onClick={()=>setSelected(null)}><ArrowLeft size={20}/></button><span className="address"><FolderOpen size={16}/>Tom Pham / Projects{selected?` / ${selected.title}`:''}</span></div>
           <div className="project-layout"><aside className="explorer-sidebar"><strong>Projects</strong><button onClick={()=>setSelected(null)} className={!selected?'selected':''}><FolderOpen size={16}/>Selected work</button><div><span>Details</span><p>{selected?.role||'A collection of things I design and build.'}</p></div></aside>
-            <div className="project-content" data-scrollable>{selected?<article className="project-detail"><div className="detail-cover"><ProjectImage src={selected.cover_image_url} alt={selected.title}/></div><div className="project-heading"><h1>{selected.title}</h1><span>{selected.year}</span></div><p>{selected.short_description}</p><dl><dt>Role</dt><dd>{selected.role}</dd><dt>Tools</dt><dd>{selected.tags.join(', ')}</dd></dl><p className="project-desc">{selected.description}</p><div className="project-links">{[[selected.case_study_url,'Case study'],[selected.live_url,'Live site'],[selected.github_url,'GitHub']].filter(([url])=>url).map(([url,label])=><a key={label} className="xp-button" href={url} target="_blank" rel="noreferrer">{label}<ExternalLink size={14}/></a>)}</div>{selected.gallery_image_urls.map((url,i)=><div key={url} className="gallery-image"><ProjectImage src={url} alt={`${selected.title}, image ${i+1}`}/></div>)}</article>:<><header className="project-intro"><p className="file-label">WORK / SELECTED PROJECTS</p><h1>Things I've been building.</h1><p>Selected projects that show how I think, design, and build.</p></header><div className="project-grid">{projects.map(project=><button className="project-file" key={project.id} onClick={()=>setSelected(project)}><div className="project-cover"><ProjectImage src={project.cover_image_url} alt={`${project.title} preview`}/><span className="project-year">{project.year}</span></div><div className="project-file-body"><span className="project-file-title"><FolderOpen size={20}/><strong>{project.title}</strong><ArrowRight size={18}/></span><p>{project.short_description}</p><small>{project.tags.join(' / ')}</small></div></button>)}</div>{!loading&&projects.length===0&&<p className="empty-projects">No published projects yet.</p>}</>}</div>
+            <div className="project-content" data-scrollable>{selected?<article className="project-detail">{selected.cover_image_url?<div className="detail-cover"><ProjectImage src={selected.cover_image_url} alt={selected.title}/></div>:null}<div className="project-heading"><h1>{selected.title}</h1><span>{selected.year}</span></div><p>{selected.short_description}</p><dl><dt>Role</dt><dd>{selected.role}</dd><dt>Tools</dt><dd>{selected.tags.join(', ')}</dd></dl><p className="project-desc">{selected.description}</p><div className="project-links">{[[selected.case_study_url,'Case study'],[selected.live_url,'Live site'],[selected.github_url,'GitHub']].filter(([url])=>url).map(([url,label])=><a key={label} className="xp-button" href={url} target="_blank" rel="noreferrer">{label}<ExternalLink size={14}/></a>)}</div>{selected.gallery_image_urls.map((url,i)=><div key={url} className="gallery-image"><ProjectImage src={url} alt={`${selected.title}, image ${i+1}`}/></div>)}</article>:<><header className="project-intro"><p className="file-label">WORK / SELECTED PROJECTS</p><h1>Things I've been building.</h1><p>Selected projects that show how I think, design, and build.</p></header><div className="project-grid">{projects.map(project=><button className="project-file" key={project.id} onClick={()=>setSelected(project)}>{project.cover_image_url?<div className="project-cover"><ProjectImage src={project.cover_image_url} alt={`${project.title} preview`}/><span className="project-year">{project.year}</span></div>:null}<div className="project-file-body">{project.cover_image_url?null:<span className="project-year-inline">{project.year}</span>}<span className="project-file-title"><FolderOpen size={20}/><strong>{project.title}</strong><ArrowRight size={18}/></span><p>{project.short_description}</p><small>{project.tags.join(' / ')}</small></div></button>)}</div>{projects.length===0&&<p className="empty-projects">No published projects yet.</p>}</>}</div>
           </div>
         </DesktopWindow>
         <DesktopWindow {...windowProps('contact','contact')} title="contact-me.txt - Address Book" className="contact-window" icon={<Mail size={16}/>} footer={<><span>Tom Pham</span><span>Contact</span></>}>

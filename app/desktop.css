@@ -91,6 +91,8 @@ button:focus-visible,a:focus-visible { outline:3px solid #efb529; outline-offset
 .project-heading {display:flex;align-items:baseline;gap:16px;}.project-heading h1 {font-size:39px;flex:1;line-height:1.2;margin:0;}.project-heading>span{color:#607365;font-size:20px;}
 .project-detail p{margin:16px 0;}.project-detail dl{display:grid;grid-template-columns:95px 1fr;gap:8px;font-size:20px;border-block:1px solid #e1e6e0;padding:14px 0;}.project-detail dt{color:#66756b;}.project-detail dd{margin:0;}
 .project-links {display:flex;gap:8px;flex-wrap:wrap;margin-bottom:20px;}.gallery-image {margin-top:20px;}.gallery-image img{width:100%;height:auto;display:block;}
+.project-file {display:flex;flex-direction:column;justify-content:flex-start;}
+.project-year-inline {display:block;margin-bottom:8px;color:#34517b;font-size:16px;}
 .empty-projects{padding:30px 0;color:#68746a;}
 .contact-paper {padding:28px 33px;}.contact-stamp {color:#2b63ae;margin:0 0 18px;stroke-width:1.4;}
 .contact-paper h1 {font-size:50px;margin-bottom:20px;}.email-address {font-size:26px;color:#1458be;text-decoration:underline;text-underline-offset:4px;overflow-wrap:anywhere;}

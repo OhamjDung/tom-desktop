@@ -10,7 +10,7 @@ Built from the Figma storyboard and the supplied Astra brief. The original Figma
 - `assets.introShort` points to the single active startup MP4, played with audio enabled. It starts on each page load. Scroll, swipe, keyboard skip, or Open desktop reveals the desktop immediately while the short video's audio continues to its end. The hidden video stays mounted only until playback completes. A failed video opens the desktop as an error fallback. Browsers that block audible autoplay display Play intro; the site never silently mutes the video.
 - `assets.monitorFrame`: set to the final transparent screen-border PNG after delivery. No monitor frame has been fabricated in CSS. Final border alignment must be checked with the actual asset.
 - Social URLs are intentionally empty. The contact window says Coming soon; it does not navigate to fake profiles.
-- Personal Desktop is the sole local project. Add actual projects to the fallback collection or connect Supabase.
+- Projects are hard-coded in `lib/projects.json`; Personal Desktop is appended last in `lib/portfolio.ts`.
 
 ## Interaction model
 
@@ -24,16 +24,7 @@ Start offers navigation, desktop reset, and intro replay. Replaying remounts the
 
 ## Projects and images
 
-`GET /api/projects` uses the local collection unless both `SUPABASE_URL` and `SUPABASE_PUBLISHABLE_KEY` exist in the runtime environment. With configuration it reads published rows, ordered by `sort_order`, through the Supabase Data API. A failed or slow request uses the local fallback. A valid empty remote collection remains empty.
-
-1. Create a Supabase project, then apply `supabase/schema.sql` once in its SQL editor.
-2. Upload project covers/gallery images to the public `project-images` Storage bucket using the Supabase dashboard.
-3. Store each public object URL in `cover_image_url` or `gallery_image_urls`. Public portfolio images do not need expiring signed URLs. For private images, add server-side signed URL generation at request time, never permanently store a short-lived signed URL.
-4. Use compressed WebP/AVIF covers around 1200px wide, consistent 16:9 crops, and descriptive titles. Missing images receive a visible fallback.
-5. Add the project URL and publishable key to `.env` locally and to the hosted site's runtime configuration. No database is provisioned or connected in this build.
-6. Change `status` from `draft` to `published` to expose a project. The page fetches the collection on each load; the remote API response caches for up to 60 seconds. Changes appear after refreshing without redeployment.
-
-The read policy only exposes published projects. The portfolio provides no visitor write policy or upload interface. Reference: [Supabase API keys](https://supabase.com/docs/guides/getting-started/api-keys) and [serving Storage assets](https://supabase.com/docs/guides/storage/serving/downloads).
+Projects come from `lib/projects.json`, bundled at build time and shown in file order. There is no database or API route. Add a row, put any cover image in `public/assets/` (compressed WebP around 1200px wide, 16:9) and reference it as `/assets/<file>` in `cover_image_url`, then deploy. Projects without a cover render as a text-only card; a cover that fails to load shows a visible fallback.
 
 ## Archived graphics
 
